@@ -15,7 +15,7 @@ public class MyUtil {
 	}
 	
 	//mostrar mensaje en consola?
-	public void cMessage(String m){
+	public void localMessage(String m){
 		System.out.println(m);
 	}
 }

@@ -7,5 +7,5 @@ public interface IPong extends Remote {
 
 	//pide una coneccion para jugar
 	//TODO: deberia retornar un String?
-	public String iWantToPlay(IPlayer p) throws RemoteException;
+	public boolean iWantToPlay(IPlayer p) throws RemoteException;
 }

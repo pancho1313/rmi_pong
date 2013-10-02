@@ -20,11 +20,13 @@ public class Client {
 		
 		IPong server;
 		try {
-			U.cMessage("Connecting to PongServer...");
+			U.localMessage("Connecting to PongServer...");
 			server = (IPong) Naming.lookup("//"+ipHost+":1099/PongServer");
 			
 			IPlayer myPlayer = new Player();
-			myPlayer.showServerMesage(server.iWantToPlay(myPlayer));
+			if(!server.iWantToPlay(myPlayer)){
+				U.localMessage("Not now my friend, go home.");
+			}
 			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block

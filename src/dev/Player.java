@@ -20,8 +20,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		super();
 	}
 	
-	public void showServerMesage(String message) throws RemoteException{
-		U.cMessage("server: " + message);
+	public void sendMessage(String message) throws RemoteException{
+		U.localMessage("server: " + message);
 	}
 	
 	

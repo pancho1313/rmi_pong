@@ -14,7 +14,6 @@ public class Pong extends UnicastRemoteObject implements IPong{
 	 */
 	//private static final long serialVersionUID = 6311160989789331741L;
 	private int nPlayers = 0;
-	private String[] playersPublicName;
 	private String ipHost;
 	private ArrayList<IPlayer> players;
 	
@@ -32,7 +31,8 @@ public class Pong extends UnicastRemoteObject implements IPong{
 			
 			try {
 				newPlayer = (IPlayer) Naming.lookup(playerPublicName);
-				
+				newPlayer.sendMessage("Welcome to Pong.");
+				newPlayer.sendMessage("Waiting for more players...");
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -46,6 +46,9 @@ public class Pong extends UnicastRemoteObject implements IPong{
 				
 				if(players.size() == nPlayers){
 					readyToPlay();
+				}else{
+					int numPlayers = (nPlayers - players.size());
+					U.localMessage("Waiting " + numPlayers + " player"+ ((numPlayers > 1)?"s.":"."));
 				}
 				
 				return true;
@@ -56,8 +59,9 @@ public class Pong extends UnicastRemoteObject implements IPong{
 	}
 	
 	private void readyToPlay() throws RemoteException{
+		U.localMessage("Let's play!");
 		for(IPlayer p : players){
-			p.showServerMesage("Game!");
+			p.sendMessage("Let's play!");
 		}
 	}
 	
@@ -67,10 +71,11 @@ public class Pong extends UnicastRemoteObject implements IPong{
 	
 	public Pong(int _nPlayers, String ipHost) throws RemoteException{
 		super();
-		nPlayers = _nPlayers; 
-		this.playersPublicName = new String[_nPlayers];
+		nPlayers = _nPlayers;
 		this.ipHost = ipHost;
 		players = new ArrayList<IPlayer>();
+		U.localMessage("PongServer Started.");
+		U.localMessage("Waiting " + nPlayers + " players.");
 	}
 	
 	public void sendPlayer(String pPublicName, IPlayer p) throws RemoteException{
@@ -83,8 +88,8 @@ public class Pong extends UnicastRemoteObject implements IPong{
 		}
 		
 		try {
-			IPlayer he = (IPlayer) Naming.lookup(pPublicName);
-			he.showServerMesage("welcome!");
+			IPlayer guest = (IPlayer) Naming.lookup(pPublicName);
+			guest.sendMessage("welcome!");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,13 +99,10 @@ public class Pong extends UnicastRemoteObject implements IPong{
 		}
 	}
 	
-	public String iWantToPlay(IPlayer p) throws RemoteException{//[String playerPublicName, String message]
-		U.cMessage("Someone wants to play.");
-		//if(players.size() +1 == nPlayers){
+	public boolean iWantToPlay(IPlayer p) throws RemoteException{
 			if(addPlayer(p)){
-				return "ok, plase wait...";
+				return true;
 			}
-		//}
-		return "sorry, we are full.";
+		return false;
 	}
 }
