@@ -1,29 +1,23 @@
-package server;
+package dev;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 
-
 public class Server {
 
+	static MyUtil U = new MyUtil();
+	
 	public static void main(String[] args) {
-		//establecer la IP del HOST
-		String ipHostDefault = "192.168.2.14";
-		String ipHost;
-		if(args.length == 1){
-			ipHost = args[0];
-		}else{
-			System.out.println("Warning: no se ha especificado la IP del HOST! (default = "+ipHostDefault+")");
-			ipHost = ipHostDefault;
-		}
+		String ipHost = U.getIpHost(args);
+		////////////////////////////////
 		
 		
 		try {
 			System.setProperty("java.rmi.server.hostname", ipHost);
-			IDate date = new MyDate();
-			Naming.rebind("rmi://localhost:1099/dateServer", date);
+			IPong pongServer = new Pong(2, ipHost);
+			Naming.rebind("rmi://localhost:1099/PongServer", pongServer);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
