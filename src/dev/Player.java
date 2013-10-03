@@ -10,17 +10,19 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class Player extends UnicastRemoteObject implements IPlayer{
 
-	/**
-	 * 
-	 */
-	//private static final long serialVersionUID = -2587092213054963543L;
+	/*-------variables de estado-----*/
+	public boolean runUserWindow;
+	private int id = -1;//TODO: verificar correctitud (el -1 podría servir para debug)
+	/*-------------------------------*/
+	
+	
+	
 	static MyUtil U = new MyUtil();
+	
 	
 	private void closeUserWindow(){
 		runUserWindow = false;
 	}
-	
-	public boolean runUserWindow;
 	
 	public Player() throws RemoteException{
 		super();
@@ -33,7 +35,16 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		U.localMessage("server: " + message);
 	}
 	
-	public void startYourGame() throws RemoteException{
-		
+	public void setPlayerId(int _id) throws RemoteException{
+		id = _id;
 	}
+	
+	public int getPlayerId(){
+		return id;
+	}
+	
+	public void closePlayer() throws RemoteException{
+		closeUserWindow();
+	}
+	
 }

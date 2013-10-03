@@ -50,8 +50,9 @@ public class Pong implements KeyListener {
 
 		frame = new JFrame(TITLE);
 		frame.setSize(WIDTH, HEIGHT);
+		frame.setResizable(false);
 		frame.setVisible(true);
-		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//TODO: me cierra el Client!
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//el frame se cierra con 'q'
 
 		canvas = new MyCanvas();
 		frame.add(canvas);
@@ -64,6 +65,22 @@ public class Pong implements KeyListener {
 		frame.pack();
 
 		frame.addKeyListener(this);
+		frame.addWindowListener(
+			new java.awt.event.WindowAdapter() {
+			    @Override
+			    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+			    	
+			    	
+			    	try {
+						pongServer.iWantToLeave(myPlayer.getPlayerId());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+			    }
+		    }
+		);
 
 		Thread game = new Thread(new Runnable() {
 
@@ -72,7 +89,7 @@ public class Pong implements KeyListener {
 				while (myPlayer.runUserWindow) {
 					if (keys[KeyEvent.VK_Q]) {
 						try {
-							pongServer.iWantToLeave();
+							pongServer.iWantToLeave(myPlayer.getPlayerId());
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -145,10 +162,11 @@ public class Pong implements KeyListener {
 					} catch (InterruptedException ex) {
 					}
 				}
+				
+				frame.dispose();//para matar la ventana del player
 			}
 		});
 		game.start();
-
 	}
 
 	@Override
