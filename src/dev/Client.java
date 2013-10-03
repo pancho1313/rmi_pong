@@ -1,30 +1,31 @@
 package dev;
 
+import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
-
-
-
+import java.util.Arrays;
+import java.util.List;
 
 public class Client {
 
 	static MyUtil U = new MyUtil();
+	private Player myPlayer;
+	private IPongServer server;
 	
-	public static void main(String[] args) {
-		String ipHost = U.getIpHost(args);
-		////////////////////////////////
-		
-		
-		IPong server;
+	//thread
+	
+	public Client(String ipHost){
 		try {
 			U.localMessage("Connecting to PongServer...");
-			server = (IPong) Naming.lookup("//"+ipHost+":1099/PongServer");
+			server = (IPongServer) Naming.lookup("//"+ipHost+":1099/PongServer");
 			
-			IPlayer myPlayer = new Player();
-			if(!server.iWantToPlay(myPlayer)){
+			myPlayer = new Player();
+			if(server.iWantToPlay((IPlayer)myPlayer)){
+				startPongWindow();
+				U.localMessage("Pong Window created?");
+			}else{
 				U.localMessage("Not now my friend, go home.");
 			}
 			
@@ -38,6 +39,17 @@ public class Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+	
+	private void startPongWindow(){
+		new Pong(myPlayer, server);
+	}
+	
+	
+	
+	public static void main(String[] args) {
+		String ipHost = U.getIpHost(args);
+		new Client(ipHost);
+	}
+	
 }

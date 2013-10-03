@@ -1,108 +1,171 @@
 package dev;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.util.List;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Arrays;
 
-public class Pong extends UnicastRemoteObject implements IPong{
+import javax.swing.JFrame;
+
+public class Pong implements KeyListener {
+
+	public final static String TITLE = "Pong - CC5303";
+	public final static int WIDTH = 640, HEIGHT = 480;
+	public final static int UPDATE_RATE = 60;
+	public final static int DX = 5;
+	public final static double DV = 0.1;
+
+	public JFrame frame;
+	public MyCanvas canvas;
+
+	public Rectangle bar1, bar2;
+	public Rectangle ball;
+
+	private double vx = 0.4, vy = 0.3;
+
+	public boolean[] keys;
 	
-	/**
-	 * 
-	 */
-	//private static final long serialVersionUID = 6311160989789331741L;
-	private int nPlayers = 0;
-	private String ipHost;
-	private ArrayList<IPlayer> players;
-	
-	private boolean addPlayer(IPlayer p) throws RemoteException{
+	//TODO: is this right?
+	private Player myPlayer;
+	private IPongServer pongServer;
+
+	public Pong(Player _myPlayer, IPongServer _pongServer) {
+
+		bar1 = new Rectangle(10, HEIGHT / 2, 10, 100);
+		bar2 = new Rectangle(WIDTH - 10, HEIGHT / 2, 10, 100);
+		ball = new Rectangle(WIDTH * 0.5, HEIGHT * 0.5, 10, 10);
+
+		keys = new boolean[KeyEvent.KEY_LAST];
+
+		myPlayer = _myPlayer;
+		pongServer = _pongServer;
 		
-		if(players.size() < nPlayers){
-			IPlayer newPlayer = null;
-			String playerPublicName = "rmi://"+ipHost+":1099/player"+players.size();
-			try {
-				Naming.rebind(playerPublicName, p);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			try {
-				newPlayer = (IPlayer) Naming.lookup(playerPublicName);
-				newPlayer.sendMessage("Welcome to Pong.");
-				newPlayer.sendMessage("Waiting for more players...");
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			if(newPlayer != null){//el player fue correctamente inicializado
-				players.add(newPlayer);
-				
-				if(players.size() == nPlayers){
-					readyToPlay();
-				}else{
-					int numPlayers = (nPlayers - players.size());
-					U.localMessage("Waiting " + numPlayers + " player"+ ((numPlayers > 1)?"s.":"."));
+		init();
+
+	}
+
+	/* Initializes window frame and set it visible */
+	public void init() {
+
+		frame = new JFrame(TITLE);
+		frame.setSize(WIDTH, HEIGHT);
+		frame.setVisible(true);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//TODO: me cierra el Client!
+
+		canvas = new MyCanvas();
+		frame.add(canvas);
+
+		canvas.setSize(WIDTH, HEIGHT);
+		canvas.rectangles.add(bar1);
+		canvas.rectangles.add(bar2);
+		canvas.rectangles.add(ball);
+
+		frame.pack();
+
+		frame.addKeyListener(this);
+
+		Thread game = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (myPlayer.runUserWindow) {
+					if (keys[KeyEvent.VK_Q]) {
+						try {
+							pongServer.iWantToLeave();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if (keys[KeyEvent.VK_UP]) {
+						if (bar1.y - bar1.h * 0.5 - DX >= 0)
+							bar1.y -= DX;
+					}
+					if (keys[KeyEvent.VK_DOWN]) {
+						if (bar1.y + bar1.h * 0.5 + DX < HEIGHT)
+							bar1.y += DX;
+					}
+					if (keys[KeyEvent.VK_W]) {
+						if (bar2.y - bar2.h * 0.5 - DX >= 0)
+							bar2.y -= DX;
+					}
+					if (keys[KeyEvent.VK_S]) {
+						if (bar2.y + bar2.h * 0.5 + DX < HEIGHT)
+							bar2.y += DX;
+					}
+
+					// actualiza posicion
+					ball.x += vx * DX;
+					ball.y += vy * DX;
+
+					// rebote en y
+					if (ball.y + ball.h * 0.5 >= HEIGHT
+							|| ball.y - ball.h * 0.5 <= 0) {
+						vy = -vy;
+					}
+
+					// rebote con paletas
+					List<Rectangle> bars = Arrays.asList(bar1, bar2);
+
+					for (int i = 0; i < bars.size(); i++) {
+						Rectangle bar = bars.get(i);
+						if (ball.bottom() < bar.top()
+								&& ball.top() > bar.bottom()) { // esta dentro
+																// en
+																// Y
+							if ((vx > 0 && ball.left() <= bar.left() && ball
+									.right() >= bar.left()) // esta a la
+															// izquierda y se
+															// mueve a la
+															// derecha
+									// o esta a la derecha y se mueve hacia la
+									// izquierda
+									|| (vx < 0 && ball.right() >= bar.right() && ball
+											.left() <= bar.right())) {
+
+								vx = -vx * (1 + DV);
+								break;
+							}
+						}
+					}
+
+					/*
+					 * for (Rectangle bar : bars) { if (ball.x + ball.w * 0.5 >
+					 * bar.x - bar.w * 0.5 && ball.x - ball.w * 0.5 > bar.x +
+					 * bar.w * 0.5) { if ((vy > 0 && ball.y + ball.h * 0.5 >=
+					 * bar.y - bar.h * 0.5) || (vy < 0 && ball.y - ball.h * 0.5
+					 * <= bar.y + bar.h * 0.5)) { vy = -vy; break; } } }
+					 */
+
+					canvas.repaint();
+
+					try {
+						Thread.sleep(1000 / UPDATE_RATE); // milliseconds
+					} catch (InterruptedException ex) {
+					}
 				}
-				
-				return true;
 			}
-		}
-		
-		return false;
-	}
-	
-	private void readyToPlay() throws RemoteException{
-		U.localMessage("Let's play!");
-		for(IPlayer p : players){
-			p.sendMessage("Let's play!");
-		}
-	}
-	
+		});
+		game.start();
 
-	
-	static MyUtil U = new MyUtil();
-	
-	public Pong(int _nPlayers, String ipHost) throws RemoteException{
-		super();
-		nPlayers = _nPlayers;
-		this.ipHost = ipHost;
-		players = new ArrayList<IPlayer>();
-		U.localMessage("PongServer Started.");
-		U.localMessage("Waiting " + nPlayers + " players.");
 	}
-	
-	public void sendPlayer(String pPublicName, IPlayer p) throws RemoteException{
-		try {
-			Naming.rebind(pPublicName, p);
-			
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			IPlayer guest = (IPlayer) Naming.lookup(pPublicName);
-			guest.sendMessage("welcome!");
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+	@Override
+	public void keyPressed(KeyEvent event) {
+		keys[event.getKeyCode()] = true;
+
 	}
-	
-	public boolean iWantToPlay(IPlayer p) throws RemoteException{
-			if(addPlayer(p)){
-				return true;
-			}
-		return false;
+
+	@Override
+	public void keyReleased(KeyEvent event) {
+		keys[event.getKeyCode()] = false;
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }

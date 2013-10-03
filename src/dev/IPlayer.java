@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 
 public interface IPlayer extends Remote {
 
-	public void sendMessage(String message) throws RemoteException;
+	public void messageFromServer(String message) throws RemoteException;
+	public void startYourGame() throws RemoteException;
 
 }
