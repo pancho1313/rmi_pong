@@ -72,10 +72,14 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		return false;
 	}
 	
+	/**
+	 * gestionar el comienzo de una partida, la bandeja de players esta comlpleta.
+	 * */
 	private void readyToPlay() throws RemoteException{
 		U.localMessage("Let's play!");
 		for(IPlayer p : players){
 			p.messageFromServer("Let's play!");
+			p.startNewGame();
 		}
 	}
 	

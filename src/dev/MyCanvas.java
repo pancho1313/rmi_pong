@@ -1,11 +1,3 @@
-/**
- * @author Richard Ibarra Ram�rez (richard.ibarra@gmail.com)
- * 
- *  CC5303 - Primavera 2013
- *  C�tedra. Javier Bustos.
- *  DCC. Universidad de Chile
- */
-
 package dev;
 
 import java.awt.Canvas;
@@ -16,11 +8,13 @@ import java.util.ArrayList;
 
 public class MyCanvas extends Canvas {
 
+
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2915397754067560840L;
-
+	private static final long serialVersionUID = -1104510752775347794L;
+	
 	public List<Rectangle> rectangles = new ArrayList<Rectangle>();
 
 	public void paint(Graphics graphics) {

@@ -13,6 +13,14 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	/*-------variables de estado-----*/
 	public boolean runUserWindow;
 	private int id = -1;//TODO: verificar correctitud (el -1 podría servir para debug)
+	
+	public static final int WAITING_NEW_MATCH = 0;
+	public static final int PLAYING_MATCH = 1;
+	public static final int MATCH_FINISHED = 2;
+	public static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
+	
+	private int gameState;//estado del juego del player
+	
 	/*-------------------------------*/
 	
 	
@@ -20,21 +28,31 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	static MyUtil U = new MyUtil();
 	
 	
+	/**
+	 * para cerrar la ventana (frame) que muestra la animacion del juego
+	 * */
 	private void closeUserWindow(){
 		runUserWindow = false;
 	}
 	
+	
+	/**
+	 * Constructor:
+	 * crea un nuevo player
+	 * */
 	public Player() throws RemoteException{
 		super();
 		
 		//variables de estado
 		runUserWindow = true;
+		gameState = WAITING_NEW_MATCH;
 	}
 	
 	public void messageFromServer(String message) throws RemoteException{
 		U.localMessage("server: " + message);
 	}
 	
+	/*------------GETTERS y SETTERS-------------*/
 	public void setPlayerId(int _id) throws RemoteException{
 		id = _id;
 	}
@@ -43,8 +61,39 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		return id;
 	}
 	
+	private void setGameState(int newState){
+		gameState = newState;
+	}
+	
+	public int getGameState(){
+		return gameState;
+	}
+	
+	/**
+	 * para saber si es necesario mostrar la interfaz (JFrame) del player.
+	 * */
+	public boolean showPlayerInterface(){
+		return runUserWindow;
+	}
+	
+	/*---------------------------------------------*/
+	
+	/**
+	 * gestiona la retirada de un player
+	 * */
 	public void closePlayer() throws RemoteException{
 		closeUserWindow();
+	}
+	
+	/**
+	 * setea las variables del player para prepararse a empezar una nueva partida de pong
+	 **/
+	public void preNewGame() throws RemoteException{
+		setGameState(this.WAITING_NEW_MATCH);
+	}
+	
+	public void startNewGame() throws RemoteException{
+		setGameState(this.PLAYING_MATCH);
 	}
 	
 }

@@ -63,54 +63,51 @@ public class Pong implements KeyListener {
 		canvas.rectangles.add(ball);
 
 		frame.pack();
-
 		frame.addKeyListener(this);
 		frame.addWindowListener(
 			new java.awt.event.WindowAdapter() {
 			    @Override
 			    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-			    	
-			    	
 			    	try {
 						pongServer.iWantToLeave(myPlayer.getPlayerId());
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
 			    }
 		    }
 		);
 
-		Thread game = new Thread(new Runnable() {
+		Thread game = new Thread(new Runnable(){
 
 			@Override
-			public void run() {
-				while (myPlayer.runUserWindow) {
-					if (keys[KeyEvent.VK_Q]) {
-						try {
-							pongServer.iWantToLeave(myPlayer.getPlayerId());
-						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					if (keys[KeyEvent.VK_UP]) {
-						if (bar1.y - bar1.h * 0.5 - DX >= 0)
-							bar1.y -= DX;
-					}
-					if (keys[KeyEvent.VK_DOWN]) {
-						if (bar1.y + bar1.h * 0.5 + DX < HEIGHT)
-							bar1.y += DX;
-					}
-					if (keys[KeyEvent.VK_W]) {
-						if (bar2.y - bar2.h * 0.5 - DX >= 0)
-							bar2.y -= DX;
-					}
-					if (keys[KeyEvent.VK_S]) {
-						if (bar2.y + bar2.h * 0.5 + DX < HEIGHT)
-							bar2.y += DX;
-					}
+			public void run(){
+				while (myPlayer.showPlayerInterface()){
+					
+					/* decidir que hacer segun el estado del juego */
+					int state = myPlayer.getGameState();
+			        switch (state) {
+			            case Player.WAITING_NEW_MATCH:
+			            	/*algo();*/
+			            	break;
+			            case Player.PLAYING_MATCH:
+			            	/*algo();*/
+			            	break;
+			            case Player.MATCH_FINISHED:
+			            	/*algo();*/
+			            	break;
+			            case Player.SHOW_MATCH_RESULTS:
+			            	/*algo();*/
+			            	break;
+			            default:
+			            	/*algoDefault();*/
+			            	break;
+			        }
+					
+			        //procesar el input del usuario
+			        userPressedKeys(state);
+			        
+					
 
 					// actualiza posicion
 					ball.x += vx * DX;
@@ -186,4 +183,60 @@ public class Pong implements KeyListener {
 		// TODO Auto-generated method stub
 
 	}
+	
+	/**
+	 * avisa al servidor que el player desea retirarse del juego.
+	 * */
+	private void exitGame(){
+		try {
+			pongServer.iWantToLeave(myPlayer.getPlayerId());
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * procesa las teclas presionadas por el usuario segun el estado del juego.
+	 * */
+	 private void userPressedKeys(int gameState){
+		 switch (gameState) {
+         case Player.WAITING_NEW_MATCH:
+         	/*algo();*/
+         	break;
+         case Player.PLAYING_MATCH:
+         	/*algo();*/
+         	break;
+         case Player.MATCH_FINISHED:
+         	/*algo();*/
+         	break;
+         case Player.SHOW_MATCH_RESULTS:
+         	/*algo();*/
+         	break;
+         default:
+         	/*algoDefault();*/
+         	break;
+		 }
+		 
+		 if (keys[KeyEvent.VK_Q]) {
+				exitGame();
+			}
+		if (keys[KeyEvent.VK_UP]) {
+			if (bar1.y - bar1.h * 0.5 - DX >= 0)
+				bar1.y -= DX;
+		}
+		if (keys[KeyEvent.VK_DOWN]) {
+			if (bar1.y + bar1.h * 0.5 + DX < HEIGHT)
+				bar1.y += DX;
+		}
+		if (keys[KeyEvent.VK_W]) {
+			if (bar2.y - bar2.h * 0.5 - DX >= 0)
+				bar2.y -= DX;
+		}
+		if (keys[KeyEvent.VK_S]) {
+			if (bar2.y + bar2.h * 0.5 + DX < HEIGHT)
+				bar2.y += DX;
+		}
+		 
+	 }
 }
