@@ -1,23 +1,15 @@
-/**
- * @author Richard Ibarra Ram�rez (richard.ibarra@gmail.com)
- * 
- *  CC5303 - Primavera 2013
- *  C�tedra. Javier Bustos.
- *  DCC. Universidad de Chile
- */
-
 package dev;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Rectangle {
+public class Bar {
 
 	double x, y;
 	double w, h;
 	Color color;
 
-	public Rectangle(double x, double y, double w, double h, Color color) {
+	public Bar(double x, double y, double w, double h, Color color) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -28,12 +20,12 @@ public class Rectangle {
 	public void draw(Graphics g) {
 		Color prevColor = g.getColor();//TODO: necesario?
 		g.setColor(color);
-		g.fillRect(left(), bottom(), (int) w, (int) h);
+		g.fillRect(left(), top(), (int) w, (int) h);
 		g.setColor(prevColor);//TODO: necesario?
 	}
 
 	public int top() {
-		return (int) (y + h * 0.5);
+		return (int) (y - h * 0.5);
 	}
 
 	public int left() {
@@ -41,11 +33,20 @@ public class Rectangle {
 	}
 
 	public int bottom() {
-		return (int) (y - h * 0.5);
+		return (int) (y + h * 0.5);
 	}
 
 	public int right() {
 		return (int) (x + w * 0.5);
 	}
 
+	public void getPos(double x, double y){
+		x = this.x;
+		y = this.y;
+	}
+	
+	public void setPos(double x, double y){
+		this.x = x;
+		this.y = y;
+	}
 }

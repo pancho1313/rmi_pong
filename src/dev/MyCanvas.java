@@ -20,8 +20,8 @@ public class MyCanvas extends Canvas {
 	
 	public int myPlayerId;
 	public Color ballColor;
-	public ArrayList<Rectangle> bars;
-	public Rectangle ball;
+	public ArrayList<Bar> bars;
+	public Bar ball;
 	public int gameState;
 
 	public MyCanvas(int WIDTH, int HEIGHT){
@@ -37,12 +37,12 @@ public class MyCanvas extends Canvas {
 		 * */
 		//default values
 		ballColor = Color.WHITE;
-		ball = new Rectangle(getWidth() / 2, getHeight() / 2, 10, 10, ballColor);
-		bars = new ArrayList<Rectangle>();
-		bars.add(new Rectangle(10, getHeight() / 2, 10, 100, Color.BLUE));
-		bars.add(new Rectangle(getWidth() - 10, getHeight() / 2, 10, 100, Color.YELLOW));
-		bars.add(new Rectangle(getWidth() / 2, getHeight() -10, 100, 10, Color.RED));
-		bars.add(new Rectangle(getWidth() / 2, 10, 100, 10, Color.GREEN));
+		ball = new Bar(getWidth() / 2, getHeight() / 2, 10, 10, ballColor);
+		bars = new ArrayList<Bar>();
+		bars.add(new Bar(10, getHeight() / 2, 10, 100, Color.BLUE));
+		bars.add(new Bar(getWidth() - 10, getHeight() / 2, 10, 100, Color.YELLOW));
+		bars.add(new Bar(getWidth() / 2, getHeight() -10, 100, 10, Color.RED));
+		bars.add(new Bar(getWidth() / 2, 10, 100, 10, Color.GREEN));
 		myPlayerId = 0;
 		gameState = Player.WAITING_NEW_MATCH;
 	}
@@ -57,7 +57,7 @@ public class MyCanvas extends Canvas {
         	g.setColor(Color.BLACK);
     		g.fillRect(0, 0, getWidth(), getHeight());
 
-    		for (Rectangle rectangle : bars) {
+    		for (Bar rectangle : bars) {
     			rectangle.draw(g);
     		}
     		

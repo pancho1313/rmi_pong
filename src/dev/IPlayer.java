@@ -10,5 +10,6 @@ public interface IPlayer extends Remote {
 	public void closePlayer() throws RemoteException;
 	public void preNewGame() throws RemoteException;
 	public void startNewGame() throws RemoteException;
+	public void refreshEnemyPos(int enemyId, double x, double y) throws RemoteException;
 
 }

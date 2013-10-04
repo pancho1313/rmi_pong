@@ -5,6 +5,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 
 
@@ -19,6 +20,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	public static final int MATCH_FINISHED = 2;
 	public static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
 	
+	private double[][] barsPos;
 	private int gameState;//estado del juego del player
 	
 	/*-------------------------------*/
@@ -46,6 +48,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		//variables de estado
 		runUserWindow = true;
 		gameState = WAITING_NEW_MATCH;
+		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
 	}
 	
 	public void messageFromServer(String message) throws RemoteException{
@@ -94,6 +97,14 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	
 	public void startNewGame() throws RemoteException{
 		setGameState(this.PLAYING_MATCH);
+	}
+	
+	/**
+	 * actualiza el registro de posiciones de bars.
+	 * */
+	public void refreshEnemyPos(int enemyId, double x, double y) throws RemoteException{
+		barsPos[enemyId][0] = x;
+		barsPos[enemyId][1] = y;
 	}
 	
 }

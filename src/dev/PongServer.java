@@ -131,4 +131,15 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		
 		players.get(playerId).closePlayer();
 	}
+	
+	/**
+	 * informa al resto de los jugadores la nueva posicion de su bar.
+	 * */
+	public void iMovedMyBar(int playerId, double x, double y) throws RemoteException{
+		for(int id = 0; id < players.size(); id++){
+			if(id != playerId){//TODO: quizas se pueda aniadir un filtro de jugadores activos?
+				players.get(id).refreshEnemyPos(playerId, x, y);
+			}
+		}
+	}
 }

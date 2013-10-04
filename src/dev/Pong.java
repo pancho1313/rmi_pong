@@ -20,12 +20,14 @@ public class Pong implements KeyListener {
 	public JFrame frame;
 	public MyCanvas canvas;
 
-	public ArrayList<Rectangle> bars;
-	public Rectangle ball;
+	public ArrayList<Bar> bars;
+	private Bar myBar;
+	public Bar ball;
 
 	private double vx = 0.4, vy = 0.3;
 
-	public boolean[] keys;
+	public boolean[] keysPressed;
+	public boolean[] keysReleased;
 	
 	//TODO: is this right?
 	private Player myPlayer;
@@ -33,7 +35,8 @@ public class Pong implements KeyListener {
 
 	public Pong(Player _myPlayer, IPongServer _pongServer) {
 
-		keys = new boolean[KeyEvent.KEY_LAST];
+		keysPressed = new boolean[KeyEvent.KEY_LAST];
+		keysReleased = new boolean[KeyEvent.KEY_LAST];
 
 		myPlayer = _myPlayer;
 		pongServer = _pongServer;
@@ -57,6 +60,7 @@ public class Pong implements KeyListener {
 
 		//canvas.setSize(WIDTH, HEIGHT);
 		bars = canvas.bars;
+		myBar = bars.get(myPlayer.getPlayerId());//TODO: ojo con una posible reasignacion de bars
 		ball = canvas.ball;
 
 		frame.pack();
@@ -103,7 +107,7 @@ public class Pong implements KeyListener {
 			        }
 					
 			        //procesar el input del usuario
-			        userPressedKeys(state);
+			        userKeys(state);
 			        
 					
 
@@ -126,15 +130,19 @@ public class Pong implements KeyListener {
 		game.start();
 	}
 
+	/*------------------------------------------*/
+	/*TODO: mover este grupo a MyUtil?*/
+	
 	@Override
 	public void keyPressed(KeyEvent event) {
-		keys[event.getKeyCode()] = true;
-
+		keysPressed[event.getKeyCode()] = true;
+		keysReleased[event.getKeyCode()] = false;
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		keys[event.getKeyCode()] = false;
+		keysPressed[event.getKeyCode()] = false;
+		keysReleased[event.getKeyCode()] = true;
 
 	}
 
@@ -143,6 +151,7 @@ public class Pong implements KeyListener {
 		// TODO Auto-generated method stub
 
 	}
+	/*----------------------------------------*/
 	
 	/**
 	 * avisa al servidor que el player desea retirarse del juego.
@@ -171,7 +180,7 @@ public class Pong implements KeyListener {
 		
 
 		for (int i = 0; i < bars.size(); i++) {
-			Rectangle bar = bars.get(i);
+			Bar bar = bars.get(i);
 			if (ball.bottom() < bar.top()
 					&& ball.top() > bar.bottom()) { // esta dentro
 													// en
@@ -204,12 +213,51 @@ public class Pong implements KeyListener {
 	/**
 	 * procesa las teclas presionadas por el usuario segun el estado del juego.
 	 * */
-	 private void userPressedKeys(int gameState){
+	 private void userKeys(int gameState){
 		 switch (gameState) {
          case Player.WAITING_NEW_MATCH:
          	/*algo();*/
          	break;
          case Player.PLAYING_MATCH:
+			if(keysPressed[KeyEvent.VK_Q]){
+				exitGame();
+			}
+			if(keysPressed[KeyEvent.VK_UP]){
+				if(myBar.top() - DX >= 0)
+					myBar.y -= DX;
+			}
+			if(keysPressed[KeyEvent.VK_DOWN]){
+				if(myBar.bottom() + DX < HEIGHT)
+					myBar.y += DX;
+			}
+			if(keysPressed[KeyEvent.VK_LEFT]){
+				if(myBar.left() - DX > 0)
+					myBar.x -= DX;
+			}
+			if(keysPressed[KeyEvent.VK_RIGHT]){
+				if(myBar.right() + DX < WIDTH)
+					myBar.x += DX;
+			}
+			/////////////////////////////////////////////
+			boolean keyReleased = false;
+			if(keysReleased[KeyEvent.VK_RIGHT]){
+				keysReleased[KeyEvent.VK_RIGHT] = false;
+				keyReleased = true;
+			}
+			if(keysReleased[KeyEvent.VK_LEFT]){
+				keysReleased[KeyEvent.VK_LEFT] = false;
+				keyReleased = true;
+			}
+			if(keysReleased[KeyEvent.VK_UP]){
+				keysReleased[KeyEvent.VK_UP] = false;
+				keyReleased = true;
+			}
+			if(keysReleased[KeyEvent.VK_DOWN]){
+				keysReleased[KeyEvent.VK_DOWN] = false;
+				keyReleased = true;
+			}
+			if(keyReleased)
+				sendMyBarPos();
          	/*algo();*/
          	break;
          case Player.MATCH_FINISHED:
@@ -222,26 +270,20 @@ public class Pong implements KeyListener {
          	/*algoDefault();*/
          	break;
 		 }
-		 
-		 if (keys[KeyEvent.VK_Q]) {
-				exitGame();
-			}
-		if (keys[KeyEvent.VK_UP]) {
-			if (bars.get(1).y - bars.get(1).h * 0.5 - DX >= 0)
-				bars.get(1).y -= DX;
+	 }
+	 
+	 /**
+	  * informa al servidor la nueva posicio de mi bar
+	  * */
+	 private void sendMyBarPos(){
+		 int myId = myPlayer.getPlayerId();
+		 double x = 0, y = 0;
+		 bars.get(myId).getPos(x, y);
+		 try {
+			pongServer.iMovedMyBar(myId, x, y);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		if (keys[KeyEvent.VK_DOWN]) {
-			if (bars.get(1).y + bars.get(1).h * 0.5 + DX < HEIGHT)
-				bars.get(1).y += DX;
-		}
-		if (keys[KeyEvent.VK_W]) {
-			if (bars.get(2).y - bars.get(2).h * 0.5 - DX >= 0)
-				bars.get(2).y -= DX;
-		}
-		if (keys[KeyEvent.VK_S]) {
-			if (bars.get(2).y + bars.get(2).h * 0.5 + DX < HEIGHT)
-				bars.get(2).y += DX;
-		}
-		 
 	 }
 }
