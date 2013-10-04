@@ -1,6 +1,7 @@
 package dev;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -19,7 +20,7 @@ public class Pong implements KeyListener {
 	public JFrame frame;
 	public MyCanvas canvas;
 
-	public Rectangle bar1, bar2;
+	public ArrayList<Rectangle> bars;
 	public Rectangle ball;
 
 	private double vx = 0.4, vy = 0.3;
@@ -31,10 +32,6 @@ public class Pong implements KeyListener {
 	private IPongServer pongServer;
 
 	public Pong(Player _myPlayer, IPongServer _pongServer) {
-
-		bar1 = new Rectangle(10, HEIGHT / 2, 10, 100);
-		bar2 = new Rectangle(WIDTH - 10, HEIGHT / 2, 10, 100);
-		ball = new Rectangle(WIDTH * 0.5, HEIGHT * 0.5, 10, 10);
 
 		keys = new boolean[KeyEvent.KEY_LAST];
 
@@ -52,15 +49,15 @@ public class Pong implements KeyListener {
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setResizable(false);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//el frame se cierra con 'q'
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-		canvas = new MyCanvas();
+		canvas = new MyCanvas(WIDTH, HEIGHT);
+		canvas.myPlayerId = myPlayer.getPlayerId();
 		frame.add(canvas);
 
-		canvas.setSize(WIDTH, HEIGHT);
-		canvas.rectangles.add(bar1);
-		canvas.rectangles.add(bar2);
-		canvas.rectangles.add(ball);
+		//canvas.setSize(WIDTH, HEIGHT);
+		bars = canvas.bars;
+		ball = canvas.ball;
 
 		frame.pack();
 		frame.addKeyListener(this);
@@ -92,6 +89,7 @@ public class Pong implements KeyListener {
 			            	break;
 			            case Player.PLAYING_MATCH:
 			            	/*algo();*/
+			            	moveBall();
 			            	break;
 			            case Player.MATCH_FINISHED:
 			            	/*algo();*/
@@ -109,51 +107,13 @@ public class Pong implements KeyListener {
 			        
 					
 
-					// actualiza posicion
-					ball.x += vx * DX;
-					ball.y += vy * DX;
-
-					// rebote en y
-					if (ball.y + ball.h * 0.5 >= HEIGHT
-							|| ball.y - ball.h * 0.5 <= 0) {
-						vy = -vy;
-					}
-
-					// rebote con paletas
-					List<Rectangle> bars = Arrays.asList(bar1, bar2);
-
-					for (int i = 0; i < bars.size(); i++) {
-						Rectangle bar = bars.get(i);
-						if (ball.bottom() < bar.top()
-								&& ball.top() > bar.bottom()) { // esta dentro
-																// en
-																// Y
-							if ((vx > 0 && ball.left() <= bar.left() && ball
-									.right() >= bar.left()) // esta a la
-															// izquierda y se
-															// mueve a la
-															// derecha
-									// o esta a la derecha y se mueve hacia la
-									// izquierda
-									|| (vx < 0 && ball.right() >= bar.right() && ball
-											.left() <= bar.right())) {
-
-								vx = -vx * (1 + DV);
-								break;
-							}
-						}
-					}
-
-					/*
-					 * for (Rectangle bar : bars) { if (ball.x + ball.w * 0.5 >
-					 * bar.x - bar.w * 0.5 && ball.x - ball.w * 0.5 > bar.x +
-					 * bar.w * 0.5) { if ((vy > 0 && ball.y + ball.h * 0.5 >=
-					 * bar.y - bar.h * 0.5) || (vy < 0 && ball.y - ball.h * 0.5
-					 * <= bar.y + bar.h * 0.5)) { vy = -vy; break; } } }
-					 */
-
+					
+					
+					//repintar el canvas
+					canvas.gameState = state;
 					canvas.repaint();
 
+					//regular los fps
 					try {
 						Thread.sleep(1000 / UPDATE_RATE); // milliseconds
 					} catch (InterruptedException ex) {
@@ -196,6 +156,51 @@ public class Pong implements KeyListener {
 		}
 	}
 	
+	private void moveBall(){
+		//TODO: separar en más sub-metodos.
+		// actualiza posicion
+		ball.x += vx * DX;
+		ball.y += vy * DX;
+
+		// rebote en y
+		if (ball.y + ball.h * 0.5 >= HEIGHT
+				|| ball.y - ball.h * 0.5 <= 0) {
+			vy = -vy;
+		}
+
+		
+
+		for (int i = 0; i < bars.size(); i++) {
+			Rectangle bar = bars.get(i);
+			if (ball.bottom() < bar.top()
+					&& ball.top() > bar.bottom()) { // esta dentro
+													// en
+													// Y
+				if ((vx > 0 && ball.left() <= bar.left() && ball
+						.right() >= bar.left()) // esta a la
+												// izquierda y se
+												// mueve a la
+												// derecha
+						// o esta a la derecha y se mueve hacia la
+						// izquierda
+						|| (vx < 0 && ball.right() >= bar.right() && ball
+								.left() <= bar.right())) {
+
+					vx = -vx * (1 + DV);
+					break;
+				}
+			}
+		}
+
+		/*
+		 * for (Rectangle bar : bars) { if (ball.x + ball.w * 0.5 >
+		 * bar.x - bar.w * 0.5 && ball.x - ball.w * 0.5 > bar.x +
+		 * bar.w * 0.5) { if ((vy > 0 && ball.y + ball.h * 0.5 >=
+		 * bar.y - bar.h * 0.5) || (vy < 0 && ball.y - ball.h * 0.5
+		 * <= bar.y + bar.h * 0.5)) { vy = -vy; break; } } }
+		 */
+	}
+	
 	/**
 	 * procesa las teclas presionadas por el usuario segun el estado del juego.
 	 * */
@@ -222,20 +227,20 @@ public class Pong implements KeyListener {
 				exitGame();
 			}
 		if (keys[KeyEvent.VK_UP]) {
-			if (bar1.y - bar1.h * 0.5 - DX >= 0)
-				bar1.y -= DX;
+			if (bars.get(1).y - bars.get(1).h * 0.5 - DX >= 0)
+				bars.get(1).y -= DX;
 		}
 		if (keys[KeyEvent.VK_DOWN]) {
-			if (bar1.y + bar1.h * 0.5 + DX < HEIGHT)
-				bar1.y += DX;
+			if (bars.get(1).y + bars.get(1).h * 0.5 + DX < HEIGHT)
+				bars.get(1).y += DX;
 		}
 		if (keys[KeyEvent.VK_W]) {
-			if (bar2.y - bar2.h * 0.5 - DX >= 0)
-				bar2.y -= DX;
+			if (bars.get(2).y - bars.get(2).h * 0.5 - DX >= 0)
+				bars.get(2).y -= DX;
 		}
 		if (keys[KeyEvent.VK_S]) {
-			if (bar2.y + bar2.h * 0.5 + DX < HEIGHT)
-				bar2.y += DX;
+			if (bars.get(2).y + bars.get(2).h * 0.5 + DX < HEIGHT)
+				bars.get(2).y += DX;
 		}
 		 
 	 }
