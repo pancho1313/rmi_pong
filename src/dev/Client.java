@@ -24,7 +24,6 @@ public class Client {
 			myPlayer = new Player();
 			if(server.iWantToPlay((IPlayer)myPlayer)){
 				startPongWindow();
-				U.localMessage("Pong Window created?");
 			}else{
 				U.localMessage("Not now my friend, go home.");
 			}

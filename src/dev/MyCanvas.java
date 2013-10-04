@@ -34,8 +34,6 @@ public class MyCanvas extends Canvas {
 		 * 				|_______|
 		 * 				
 		 * 				 rojo (0)
-		 * 
-		 * 
 		 * */
 		//default values
 		ballColor = Color.WHITE;
@@ -43,10 +41,9 @@ public class MyCanvas extends Canvas {
 		bars = new ArrayList<Rectangle>();
 		bars.add(new Rectangle(10, getHeight() / 2, 10, 100, Color.BLUE));
 		bars.add(new Rectangle(getWidth() - 10, getHeight() / 2, 10, 100, Color.YELLOW));
-		bars.add(new Rectangle(getWidth() / 2, getHeight() -10, 100, 10, Color.GREEN));
-		bars.add(new Rectangle(getWidth() / 2, 10, 100, 10, Color.RED));
+		bars.add(new Rectangle(getWidth() / 2, getHeight() -10, 100, 10, Color.RED));
+		bars.add(new Rectangle(getWidth() / 2, 10, 100, 10, Color.GREEN));
 		myPlayerId = 0;
-		bars = new ArrayList<Rectangle>();
 		gameState = Player.WAITING_NEW_MATCH;
 	}
 	
@@ -60,7 +57,6 @@ public class MyCanvas extends Canvas {
         	g.setColor(Color.BLACK);
     		g.fillRect(0, 0, getWidth(), getHeight());
 
-    		g.setColor(Color.WHITE);
     		for (Rectangle rectangle : bars) {
     			rectangle.draw(g);
     		}
