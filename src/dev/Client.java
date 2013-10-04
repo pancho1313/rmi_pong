@@ -16,8 +16,9 @@ public class Client {
 	
 	//thread
 	
-	public Client(String ipHost){
+	public Client(String ipHost, String ipGuest){
 		try {
+			System.setProperty("java.rmi.server.hostname", ipGuest);
 			U.localMessage("Connecting to PongServer...");
 			server = (IPongServer) Naming.lookup("//"+ipHost+":1099/PongServer");
 			
@@ -47,8 +48,9 @@ public class Client {
 	
 	
 	public static void main(String[] args) {
-		String ipHost = U.getIpHost(args);
-		new Client(ipHost);
+		String ipHost = U.getFirstArg(args);
+		String ipGuest = U.getSecondArg(args);
+		new Client(ipHost, ipGuest);
 	}
 	
 }

@@ -10,7 +10,7 @@ public class Server {
 	static MyUtil U = new MyUtil();
 	
 	public static void main(String[] args) {
-		String ipHost = U.getIpHost(args);
+		String ipHost = U.getFirstArg(args);
 		////////////////////////////////
 		
 		
