@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public class Bar {
 
-	double x, y;
+	double x, y, vx, vy;
 	double w, h;
 	Color color;
 	boolean hidden;
@@ -17,6 +17,7 @@ public class Bar {
 		this.h = h;
 		this.color = color;
 		this.hidden = false;
+		vx = vy = 0;
 	}
 
 	public void draw(Graphics g) {

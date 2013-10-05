@@ -16,13 +16,15 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	private int id = -1;//TODO: verificar correctitud (el -1 podría servir para debug)
 	
 	public static final int WAITING_NEW_MATCH = 0;
-	public static final int BRACE_YOURSELF = 1;
+	public static final int BRACE_YOURSELF = 1;//transitorio, para saludar a los contendientes
 	public static final int PLAYING_MATCH = 2;
 	public static final int MATCH_FINISHED = 3;
 	public static final int SHOW_MATCH_RESULTS = 4;//TODO: opcion para jugar de nuevo?
 	
 	public double[][] barsPos;
 	public boolean[] activePlayers;//para saber a que players considerar en la partida
+	public boolean refreshBall;
+	public double[] ballParameters;
 	private int gameState;//estado del juego del player
 	
 	/*-------------------------------*/
@@ -39,6 +41,13 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		runUserWindow = false;
 	}
 	
+	private void setBall(double x, double y, double vx, double vy){
+		refreshBall = true;
+		ballParameters[0] = x;
+		ballParameters[1] = y;
+		ballParameters[2] = vx;
+		ballParameters[3] = vy;
+	}
 	
 	/**
 	 * Constructor:
@@ -52,7 +61,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		gameState = WAITING_NEW_MATCH;
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
 		activePlayers = new boolean[4];//inicialmente false
-		
+		refreshBall = false;
+		ballParameters = new double[4];//[x,y,vx,vy]
 	}
 	
 	public void messageFromServer(String message) throws RemoteException{
@@ -99,7 +109,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		setGameState(this.WAITING_NEW_MATCH);
 	}
 	
-	public void startNewGame() throws RemoteException{
+	public void startNewGame(double ballVX, double ballVY) throws RemoteException{
+		setBall(10,30,ballVX,ballVY);//TODO: empezar desde la mitad del tablero
 		setGameState(this.BRACE_YOURSELF);
 	}
 	
@@ -111,6 +122,13 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		this.activePlayers[enemyId] = true;//TODO: eto desperdicia el sistema local
 		barsPos[enemyId][0] = x;
 		barsPos[enemyId][1] = y;
+	}
+	
+	/**
+	 * actualiza la posicion de la bola luego de un rebote "ajeno".
+	 * */
+	public void refreshBall(double x, double y, double vx, double vy) throws RemoteException{
+		setBall(x,y,vx,vy);
 	}
 	
 }

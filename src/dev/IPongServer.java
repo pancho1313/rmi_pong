@@ -10,4 +10,5 @@ public interface IPongServer extends Remote {
 	public boolean iWantToPlay(IPlayer p) throws RemoteException;
 	public void iWantToLeave(int playerId) throws RemoteException;
 	public void iMovedMyBar(int playerId, double x, double y) throws RemoteException;
+	public void refreshBall(int playerId, boolean missedBall, double x, double y, double vx, double vy) throws RemoteException;//TODO: la posicion es deducible
 }

@@ -78,7 +78,7 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	private void readyToPlay() throws RemoteException{
 		U.localMessage("Let's play!");
 		for(IPlayer p : players){
-			p.startNewGame();
+			p.startNewGame(0.4,0.3);//TODO: random?
 			p.messageFromServer("Let's play!");
 		}
 	}
@@ -96,6 +96,9 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		U.localMessage("Waiting " + nPlayers + " players.");
 	}
 	
+	/**
+	 * para que un player pueda ser publicado por el pongServer
+	 * */
 	public void sendPlayer(String pPublicName, IPlayer p) throws RemoteException{
 		try {
 			Naming.rebind(pPublicName, p);
@@ -138,6 +141,19 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		for(int id = 0; id < players.size(); id++){
 			if(id != playerId){//TODO: quizas se pueda aniadir un filtro de jugadores activos?
 				players.get(id).refreshEnemyPos(playerId, x, y);
+			}
+		}
+	}
+	
+	/**
+	 * actualiza la posicion de la bola en los demas players,
+	 * ademas informa si el player perdio la bola.
+	 * */
+	public void refreshBall(int playerId, boolean missedBall, double x, double y, double vx, double vy) throws RemoteException{
+		//TODO: misseBall...
+		for(int id = 0; id < players.size(); id++){
+			if(id != playerId){//TODO: quizas se pueda aniadir un filtro de jugadores activos?
+				players.get(id).refreshBall(x, y, vx, vy);
 			}
 		}
 	}

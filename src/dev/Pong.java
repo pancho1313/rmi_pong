@@ -168,20 +168,69 @@ public class Pong implements KeyListener {
 		}
 	}
 	
+	/**
+	 * procesa el movimiento de la pelota.
+	 * */
 	private void moveBall(){
 		//TODO: separar en más sub-metodos.
-		// actualiza posicion
-		ball.x += vx * DX;
-		ball.y += vy * DX;
+		// actualiza posicion y velocidad
+		if(myPlayer.refreshBall){
+			myPlayer.refreshBall = false;//ok
+			
+			ball.x = myPlayer.ballParameters[0];
+			ball.y = myPlayer.ballParameters[1];
+			ball.vx = myPlayer.ballParameters[2];
+			ball.vy = myPlayer.ballParameters[3];
+			
+			//ajustar a los limites del tablero
+			if(ball.x < 0){
+				ball.x = 1;
+			}else if(ball.x >= WIDTH){
+				ball.x = WIDTH - 2;
+			}
+			if(ball.y < 0){
+				ball.y = 1;
+			}else if(ball.y >= HEIGHT){
+				ball.y = HEIGHT - 2;
+			}
+		}
 
-		// rebote en y
-		if (ball.y + ball.h * 0.5 >= HEIGHT
-				|| ball.y - ball.h * 0.5 <= 0) {
-			vy = -vy;
+		//rebote
+		if(ball.vx < 0 && ball.x + ball.vx < 0){//left pong
+			if(myPlayer.getPlayerId() == MyCanvas.LEFT_BLUE){
+				ball.vx = -ball.vx;
+			}else{
+				ball.vx = 0;
+				ball.vy = 0;
+			}
+		}else if(ball.vx > 0 && ball.x + ball.vx >= WIDTH){//right pong
+			if(myPlayer.getPlayerId() == MyCanvas.RIGHT_YELLOW){
+				ball.vx = -ball.vx;
+			}else{
+				ball.vx = 0;
+				ball.vy = 0;
+			}
+		}else if(ball.vy < 0 && ball.y + ball.vy < 0){//top pong
+			if(myPlayer.getPlayerId() == MyCanvas.TOP_GREEN){
+				ball.vy = -ball.vy;
+			}else{
+				ball.vx = 0;
+				ball.vy = 0;
+			}
+		}else if(ball.vy > 0 && ball.y + ball.vy >= HEIGHT){//bottom pong
+			if(myPlayer.getPlayerId() == MyCanvas.BOTTOM_RED){
+				ball.vy = -ball.vy;
+			}else{
+				ball.vx = 0;
+				ball.vy = 0;
+			}
+		}else{
+			ball.x += ball.vx;
+			ball.y += ball.vy;
 		}
 
 		
-
+/*
 		for (int i = 0; i < bars.size(); i++) {
 			Bar bar = bars.get(i);
 			if (ball.bottom() < bar.top()
@@ -203,7 +252,7 @@ public class Pong implements KeyListener {
 				}
 			}
 		}
-
+*/
 		/*
 		 * for (Rectangle bar : bars) { if (ball.x + ball.w * 0.5 >
 		 * bar.x - bar.w * 0.5 && ball.x - ball.w * 0.5 > bar.x +

@@ -11,7 +11,18 @@ import java.util.ArrayList;
 
 public class MyCanvas extends Canvas {
 
-
+	/* convention	 verde (3)
+	 * 				 _______
+	 * 				|		|
+	 * 		azul (0)|		|amarillo (1)
+	 * 				|_______|
+	 * 				
+	 * 				 rojo (2)
+	 * */
+	public static final int LEFT_BLUE = 0;
+	public static final int RIGHT_YELLOW = 1;
+	public static final int BOTTOM_RED = 2;
+	public static final int TOP_GREEN = 3;
 	
 	/**
 	 * 
@@ -27,14 +38,7 @@ public class MyCanvas extends Canvas {
 	public MyCanvas(int WIDTH, int HEIGHT){
 		super();
 		this.setSize(WIDTH, HEIGHT);
-		/* convention	 verde (3)
-		 * 				 _______
-		 * 				|		|
-		 * 		azul (0)|		|amarillo (1)
-		 * 				|_______|
-		 * 				
-		 * 				 rojo (2)
-		 * */
+		
 		//default values
 		ballColor = Color.WHITE;
 		ball = new Bar(getWidth() / 2, getHeight() / 2, 10, 10, ballColor);
