@@ -184,23 +184,12 @@ public class Pong implements KeyListener {
 			ball.vx = myPlayer.ballParameters[2];
 			ball.vy = myPlayer.ballParameters[3];
 			
-			//TODO: este es un ajuste manual de colores
-			switch((int)myPlayer.ballParameters[4]){
-			case 0:
-				ball.color = Color.BLUE;
-				break;
-			case 1:
-				ball.color = Color.YELLOW;
-				break;
-			case 2:
-				ball.color = Color.RED;
-				break;
-			case 3:
-				ball.color = Color.GREEN;
-				break;
-			default:
+			//pintar pelota
+			int colorId = (int)myPlayer.ballParameters[4];
+			if(colorId < 0){
 				ball.color = Color.WHITE;
-				break;
+			}else{
+				ball.color = MyCanvas.COLORS[colorId];	
 			}
 			
 			//ajustar a los limites del tablero
@@ -380,6 +369,10 @@ public class Pong implements KeyListener {
 		*/
 		//////////////////////////////////////////////
 		if(mustSendBallPos){
+			if(!missedBall){
+				ball.color = MyCanvas.COLORS[myPlayer.getPlayerId()];
+			}
+			
 			try {
 				pongServer.refreshBall(myPlayer.getPlayerId(), missedBall, ball.x, ball.y, ball.vx, ball.vy);
 			} catch (RemoteException e) {

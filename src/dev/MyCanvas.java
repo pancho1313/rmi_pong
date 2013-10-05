@@ -24,6 +24,8 @@ public class MyCanvas extends Canvas {
 	public static final int BOTTOM_RED = 2;
 	public static final int TOP_GREEN = 3;
 	
+	public static final Color[] COLORS = new Color[]{Color.BLUE, Color.YELLOW, Color.RED, Color.GREEN};
+	
 	/**
 	 * 
 	 */
