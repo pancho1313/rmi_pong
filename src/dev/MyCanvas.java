@@ -54,13 +54,7 @@ public class MyCanvas extends Canvas {
         	paintWaiting(g);
         	break;
         case Player.PLAYING_MATCH:
-        	g.setColor(Color.BLACK);
-    		g.fillRect(0, 0, getWidth(), getHeight());
-
-    		for (Bar rectangle : bars) {
-    			rectangle.draw(g);
-    		}
-    		
+        	paintPlaying(g);
         	break;
         case Player.MATCH_FINISHED:
         	/*algo();*/
@@ -92,5 +86,14 @@ public class MyCanvas extends Canvas {
 	    int w = fm.stringWidth(waitPlease);
 	    int h = fm.getAscent();
 	    g.drawString(waitPlease, (getWidth()/2) - (w / 2), (getHeight()/2) + (h / 4));
+	}
+	
+	private void paintPlaying(Graphics g){
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, getWidth(), getHeight());
+
+		for (Bar rectangle : bars) {
+			rectangle.draw(g);
+		}
 	}
 }

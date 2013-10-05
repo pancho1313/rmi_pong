@@ -293,8 +293,13 @@ public class Pong implements KeyListener {
 		 for(int id = 0; id < bars.size(); id++){
 			 if(id != myPlayer.getPlayerId()){
 				 Bar enemyBar = bars.get(id);
-				 enemyBar.x = myPlayer.barsPos[id][0];
-				 enemyBar.y = myPlayer.barsPos[id][1];
+				 if(myPlayer.activePlayers[id]){
+					 enemyBar.hidden = true;
+				 }else{
+					 enemyBar.hidden = false;
+					 enemyBar.x = myPlayer.barsPos[id][0];
+					 enemyBar.y = myPlayer.barsPos[id][1];
+				 }
 			 }
 		 }
 	 }

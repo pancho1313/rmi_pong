@@ -8,6 +8,7 @@ public class Bar {
 	double x, y;
 	double w, h;
 	Color color;
+	boolean hidden;
 
 	public Bar(double x, double y, double w, double h, Color color) {
 		this.x = x;
@@ -15,13 +16,16 @@ public class Bar {
 		this.w = w;
 		this.h = h;
 		this.color = color;
+		this.hidden = false;
 	}
 
 	public void draw(Graphics g) {
-		Color prevColor = g.getColor();//TODO: necesario?
-		g.setColor(color);
-		g.fillRect(left(), top(), (int) w, (int) h);
-		g.setColor(prevColor);//TODO: necesario?
+		if(!hidden){
+			Color prevColor = g.getColor();//TODO: necesario?
+			g.setColor(color);
+			g.fillRect(left(), top(), (int) w, (int) h);
+			g.setColor(prevColor);//TODO: necesario?
+		}
 	}
 
 	public int top() {
