@@ -51,9 +51,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		gameState = WAITING_NEW_MATCH;
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
 		activePlayers = new boolean[4];
-		for(boolean b: activePlayers){
-			b = false;
-		}
+		
 	}
 	
 	public void messageFromServer(String message) throws RemoteException{
