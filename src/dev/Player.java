@@ -21,6 +21,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	public static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
 	
 	public double[][] barsPos;
+	public boolean[] activePlayers;//para saber a que players considerar en la partida
 	private int gameState;//estado del juego del player
 	
 	/*-------------------------------*/
@@ -49,6 +50,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		runUserWindow = true;
 		gameState = WAITING_NEW_MATCH;
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
+		activePlayers = new boolean[4];
 	}
 	
 	public void messageFromServer(String message) throws RemoteException{
