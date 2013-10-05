@@ -64,7 +64,7 @@ public class MyCanvas extends Canvas {
         case Player.PLAYING_MATCH:
         	paintPlaying(g);
         	break;
-        case Player.MATCH_FINISHED:
+        case Player.GAME_OVER:
         	/*algo();*/
         	break;
         case Player.SHOW_MATCH_RESULTS:
@@ -114,7 +114,7 @@ public class MyCanvas extends Canvas {
 		for(int i = 0; i < scores.length; i++){
 			String score = scores[i] + "";
 			if(!bars[i].hidden){
-				g.setColor(Color.WHITE);
+				g.setColor(Color.BLACK);
 				FontMetrics fm = g.getFontMetrics();
 			    fm = g.getFontMetrics();
 			    int w = fm.stringWidth(score);

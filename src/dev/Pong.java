@@ -101,7 +101,7 @@ public class Pong implements KeyListener {
 			            	moveBall();
 			            	refreshScores();
 			            	break;
-			            case Player.MATCH_FINISHED:
+			            case Player.GAME_OVER:
 			            	/*algo();*/
 			            	break;
 			            case Player.SHOW_MATCH_RESULTS:
@@ -449,7 +449,7 @@ public class Pong implements KeyListener {
 				sendMyBarPos();
          	/*algo();*/
          	break;
-         case Player.MATCH_FINISHED:
+         case Player.GAME_OVER:
          	/*algo();*/
          	break;
          case Player.SHOW_MATCH_RESULTS:

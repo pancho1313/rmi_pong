@@ -18,8 +18,9 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	public static final int WAITING_NEW_MATCH = 0;
 	public static final int BRACE_YOURSELF = 1;//transitorio, para saludar a los contendientes
 	public static final int PLAYING_MATCH = 2;
-	public static final int MATCH_FINISHED = 3;
-	public static final int SHOW_MATCH_RESULTS = 4;//TODO: opcion para jugar de nuevo?
+	public static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
+	public static final int GAME_OVER = 4;
+	
 	
 	public double[][] barsPos;
 	public boolean[] activePlayers;//para saber a que players considerar en la partida
@@ -116,12 +117,12 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	 * setea las variables del player para prepararse a empezar una nueva partida de pong
 	 **/
 	public void preNewGame() throws RemoteException{
-		setGameState(this.WAITING_NEW_MATCH);
+		setGameState(WAITING_NEW_MATCH);
 	}
 	
 	public void startNewGame(double ballVX, double ballVY) throws RemoteException{
 		setBall(-1, false, 10,30,ballVX,ballVY);//TODO: empezar desde la mitad del tablero
-		setGameState(this.BRACE_YOURSELF);
+		setGameState(BRACE_YOURSELF);
 	}
 	
 	
@@ -146,4 +147,12 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		refreshScores = true;
 	}
 	
+	public void showMatchResults() throws RemoteException{
+		setGameState(SHOW_MATCH_RESULTS);
+	}
+	
+	public void quit() throws RemoteException{
+		//TODO:...
+		setGameState(GAME_OVER);
+	}
 }
