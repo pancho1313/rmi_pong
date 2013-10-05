@@ -176,8 +176,8 @@ public class Pong implements KeyListener {
 	private void moveBall(){
 		//TODO: separar en más sub-metodos.
 		// actualiza posicion y velocidad
-		if(myPlayer.refreshBall){
-			myPlayer.refreshBall = false;//ok
+		if(myPlayer.refreshBallPos){
+			myPlayer.refreshBallPos = false;//ok
 			
 			ball.x = myPlayer.ballParameters[0];
 			ball.y = myPlayer.ballParameters[1];
@@ -185,11 +185,15 @@ public class Pong implements KeyListener {
 			ball.vy = myPlayer.ballParameters[3];
 			
 			//pintar pelota
-			int colorId = (int)myPlayer.ballParameters[4];
-			if(colorId < 0){
-				ball.color = Color.WHITE;
-			}else{
-				ball.color = MyCanvas.COLORS[colorId];	
+			if(myPlayer.refreshBallColor){
+				myPlayer.refreshBallColor = false;//ok
+				
+				int colorId = (int)myPlayer.ballParameters[4];
+				if(colorId < 0){
+					ball.color = Color.WHITE;
+				}else{
+					ball.color = MyCanvas.COLORS[colorId];	
+				}
 			}
 			
 			//ajustar a los limites del tablero

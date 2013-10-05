@@ -23,7 +23,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	
 	public double[][] barsPos;
 	public boolean[] activePlayers;//para saber a que players considerar en la partida
-	public boolean refreshBall;
+	public boolean refreshBallPos;
+	public boolean refreshBallColor;
 	public double[] ballParameters;
 	private int gameState;//estado del juego del player
 	
@@ -41,13 +42,15 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		runUserWindow = false;
 	}
 	
-	private void setBall(int enemyId, double x, double y, double vx, double vy){
-		refreshBall = true;
+	private void setBall(int enemyId, boolean missedBall, double x, double y, double vx, double vy){
+		refreshBallPos = true;
 		
 		ballParameters[0] = x;
 		ballParameters[1] = y;
 		ballParameters[2] = vx;
 		ballParameters[3] = vy;
+		
+		refreshBallColor = !missedBall;
 		ballParameters[4] = (double)enemyId;
 	}
 	
@@ -63,7 +66,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		gameState = WAITING_NEW_MATCH;
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
 		activePlayers = new boolean[4];//inicialmente false
-		refreshBall = false;
+		refreshBallPos = false;
+		refreshBallColor = false;
 		ballParameters = new double[5];//[x,y,vx,vy,color]
 	}
 	
@@ -112,7 +116,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	}
 	
 	public void startNewGame(double ballVX, double ballVY) throws RemoteException{
-		setBall(-1, 10,30,ballVX,ballVY);//TODO: empezar desde la mitad del tablero
+		setBall(-1, false, 10,30,ballVX,ballVY);//TODO: empezar desde la mitad del tablero
 		setGameState(this.BRACE_YOURSELF);
 	}
 	
@@ -129,8 +133,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	/**
 	 * actualiza la posicion de la bola luego de un rebote "ajeno".
 	 * */
-	public void refreshBall(int enemyId, double x, double y, double vx, double vy) throws RemoteException{
-		setBall(enemyId,x,y,vx,vy);
+	public void refreshBall(int enemyId, boolean missedBall, double x, double y, double vx, double vy) throws RemoteException{
+		setBall(enemyId,missedBall,x,y,vx,vy);
 	}
 	
 }

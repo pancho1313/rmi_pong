@@ -153,7 +153,7 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		//TODO: missedBall...
 		for(int id = 0; id < players.size(); id++){
 			if(id != playerId){//TODO: quizas se pueda aniadir un filtro de jugadores activos?
-				players.get(id).refreshBall(playerId, x, y, vx, vy);
+				players.get(id).refreshBall(playerId, missedBall, x, y, vx, vy);
 			}
 		}
 	}
