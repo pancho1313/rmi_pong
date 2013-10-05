@@ -33,9 +33,10 @@ public class MyCanvas extends Canvas {
 	
 	public int myPlayerId;
 	public Color ballColor;
-	public ArrayList<Bar> bars;
+	public Bar[] bars;
 	public Bar ball;
 	public int gameState;
+	public int[] scores;
 
 	public MyCanvas(int WIDTH, int HEIGHT){
 		super();
@@ -44,11 +45,12 @@ public class MyCanvas extends Canvas {
 		//default values
 		ballColor = Color.WHITE;
 		ball = new Bar(getWidth() / 2, getHeight() / 2, 10, 10, ballColor);
-		bars = new ArrayList<Bar>();
-		bars.add(new Bar(10, getHeight() / 2, 10, 100, Color.BLUE));
-		bars.add(new Bar(getWidth() - 10, getHeight() / 2, 10, 100, Color.YELLOW));
-		bars.add(new Bar(getWidth() / 2, getHeight() -10, 100, 10, Color.RED));
-		bars.add(new Bar(getWidth() / 2, 10, 100, 10, Color.GREEN));
+		bars = new Bar[4];
+		bars[0] = new Bar(10, getHeight() / 2, 10, 100, Color.BLUE);
+		bars[1] = new Bar(getWidth() - 10, getHeight() / 2, 10, 100, Color.YELLOW);
+		bars[2] = new Bar(getWidth() / 2, getHeight() -10, 100, 10, Color.RED);
+		bars[3] = new Bar(getWidth() / 2, 10, 100, 10, Color.GREEN);
+		scores = new int[4];
 		myPlayerId = 0;
 		gameState = Player.WAITING_NEW_MATCH;
 	}
@@ -82,7 +84,7 @@ public class MyCanvas extends Canvas {
 		String waitPlease = "Waiting more players...";
 		
 		//fondo
-		g.setColor(bars.get(myPlayerId).color);
+		g.setColor(bars[myPlayerId].color);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		//texto
@@ -95,14 +97,30 @@ public class MyCanvas extends Canvas {
 	}
 	
 	private void paintPlaying(Graphics g){
+		//fondo
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
+		//ball
+		g.setColor(Color.WHITE);
+		ball.draw(g);
+		
+		//bars
 		for (Bar rectangle : bars) {
 			rectangle.draw(g);
 		}
 		
-		g.setColor(Color.WHITE);
-		ball.draw(g);
+		//scores
+		for(int i = 0; i < scores.length; i++){
+			String score = scores[i] + "";
+			if(!bars[i].hidden){
+				g.setColor(Color.WHITE);
+				FontMetrics fm = g.getFontMetrics();
+			    fm = g.getFontMetrics();
+			    int w = fm.stringWidth(score);
+			    int h = fm.getAscent();
+			    g.drawString(score, (int)bars[i].x - (w / 2), (int)bars[i].y + (h / 2));
+			}
+		}
 	}
 }

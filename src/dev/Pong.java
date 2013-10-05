@@ -21,7 +21,7 @@ public class Pong implements KeyListener {
 	public JFrame frame;
 	public MyCanvas canvas;
 
-	public ArrayList<Bar> bars;
+	public Bar[] bars;
 	private Bar myBar;
 	public Bar ball;
 
@@ -61,7 +61,7 @@ public class Pong implements KeyListener {
 
 		//canvas.setSize(WIDTH, HEIGHT);
 		bars = canvas.bars;
-		myBar = bars.get(myPlayer.getPlayerId());//TODO: ojo con una posible reasignacion de bars
+		myBar = bars[myPlayer.getPlayerId()];//TODO: ojo con una posible reasignacion de bars
 		ball = canvas.ball;
 
 		frame.pack();
@@ -99,6 +99,7 @@ public class Pong implements KeyListener {
 			            case Player.PLAYING_MATCH:
 			            	/*algo();*/
 			            	moveBall();
+			            	refreshScores();
 			            	break;
 			            case Player.MATCH_FINISHED:
 			            	/*algo();*/
@@ -169,6 +170,14 @@ public class Pong implements KeyListener {
 		}
 	}
 	
+	
+	private void refreshScores(){
+		if(myPlayer.refreshScores){
+			myPlayer.refreshScores = false;
+			
+			canvas.scores = myPlayer.scores; 
+		}
+	}
 	
 	/**
 	 * procesa el movimiento de la pelota.
@@ -468,9 +477,9 @@ public class Pong implements KeyListener {
 	  * actualiza las posiciones de los enemigos segun la info del myPlayer asociado.
 	  * */
 	 private void refreshEnemyDrawingPos(){
-		 for(int id = 0; id < bars.size(); id++){
+		 for(int id = 0; id < bars.length; id++){
 			 if(id != myPlayer.getPlayerId()){
-				 Bar enemyBar = bars.get(id);
+				 Bar enemyBar = bars[id];
 				 if(!myPlayer.activePlayers[id]){
 					 enemyBar.hidden = true;
 				 }else{
