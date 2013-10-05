@@ -27,13 +27,13 @@ public class MyCanvas extends Canvas {
 	public MyCanvas(int WIDTH, int HEIGHT){
 		super();
 		this.setSize(WIDTH, HEIGHT);
-		/* convention	 verde (2)
+		/* convention	 verde (3)
 		 * 				 _______
 		 * 				|		|
-		 * 		azul (3)|		|amarillo (1)
+		 * 		azul (0)|		|amarillo (1)
 		 * 				|_______|
 		 * 				
-		 * 				 rojo (0)
+		 * 				 rojo (2)
 		 * */
 		//default values
 		ballColor = Color.WHITE;

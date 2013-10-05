@@ -221,21 +221,24 @@ public class Pong implements KeyListener {
 			if(keysPressed[KeyEvent.VK_Q]){
 				exitGame();
 			}
-			if(keysPressed[KeyEvent.VK_UP]){
-				if(myBar.top() - DX >= 0)
-					myBar.y -= DX;
-			}
-			if(keysPressed[KeyEvent.VK_DOWN]){
-				if(myBar.bottom() + DX < HEIGHT)
-					myBar.y += DX;
-			}
-			if(keysPressed[KeyEvent.VK_LEFT]){
-				if(myBar.left() - DX > 0)
-					myBar.x -= DX;
-			}
-			if(keysPressed[KeyEvent.VK_RIGHT]){
-				if(myBar.right() + DX < WIDTH)
-					myBar.x += DX;
+			if(myPlayer.getPlayerId() < 2){//izq der
+				if(keysPressed[KeyEvent.VK_UP]){
+					if(myBar.top() - DX >= 0)
+						myBar.y -= DX;
+				}
+				if(keysPressed[KeyEvent.VK_DOWN]){
+					if(myBar.bottom() + DX < HEIGHT)
+						myBar.y += DX;
+				}
+			}else{//down up
+				if(keysPressed[KeyEvent.VK_LEFT]){
+					if(myBar.left() - DX > 0)
+						myBar.x -= DX;
+				}
+				if(keysPressed[KeyEvent.VK_RIGHT]){
+					if(myBar.right() + DX < WIDTH)
+						myBar.x += DX;
+				}
 			}
 			/////////////////////////////////////////////
 			boolean keyReleased = false;
