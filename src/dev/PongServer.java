@@ -228,7 +228,7 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 			}
 		}
 		
-		if(playersScore[lastPlayerRebound] == 1){//TODO: parametrizar puntaje de termino
+		if(lastPlayerRebound>=0 && playersScore[lastPlayerRebound] == 1){//TODO: parametrizar puntaje de termino
 			gameOver();
 		}
 	}
