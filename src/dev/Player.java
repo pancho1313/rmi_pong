@@ -20,7 +20,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	public static final int MATCH_FINISHED = 2;
 	public static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
 	
-	private double[][] barsPos;
+	public double[][] barsPos;
 	private int gameState;//estado del juego del player
 	
 	/*-------------------------------*/

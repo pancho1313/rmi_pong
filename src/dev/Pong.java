@@ -109,10 +109,9 @@ public class Pong implements KeyListener {
 			        //procesar el input del usuario
 			        userKeys(state);
 			        
-					
-
-					
-					
+			        //actualizar las posiciones de los enemigos
+			        refreshEnemyDrawingPos();
+			        
 					//repintar el canvas
 					canvas.gameState = state;
 					canvas.repaint();
@@ -276,14 +275,24 @@ public class Pong implements KeyListener {
 	  * informa al servidor la nueva posicio de mi bar
 	  * */
 	 private void sendMyBarPos(){
-		 int myId = myPlayer.getPlayerId();
-		 double x = 0, y = 0;
-		 bars.get(myId).getPos(x, y);
 		 try {
-			pongServer.iMovedMyBar(myId, x, y);
+			pongServer.iMovedMyBar(myPlayer.getPlayerId(), myBar.x, myBar.y);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	 }
+	 
+	 /**
+	  * actualiza las posiciones de los enemigos segun la info del myPlayer asociado.
+	  * */
+	 private void refreshEnemyDrawingPos(){
+		 for(int id = 0; id < bars.size(); id++){
+			 if(id != myPlayer.getPlayerId()){
+				 Bar enemyBar = bars.get(id);
+				 enemyBar.x = myPlayer.barsPos[id][0];
+				 enemyBar.y = myPlayer.barsPos[id][1];
+			 }
+		 }
 	 }
 }

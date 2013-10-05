@@ -124,11 +124,10 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		return false;
 	}
 	
+	/**
+	 * Usado para gestionar la correcta salida de un player
+	 * */
 	public void iWantToLeave(int playerId) throws RemoteException{
-		/*
-		 * Usado para gestionar la correcta salida de un player
-		 * */
-		
 		players.get(playerId).closePlayer();
 	}
 	
