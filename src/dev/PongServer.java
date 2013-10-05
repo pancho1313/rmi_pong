@@ -124,7 +124,7 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	
 	public PongServer(int _nPlayers, String ipHost) throws RemoteException{
 		super();
-		U.localMessage("PongServer Started.");
+		U.localMessage("PongServer Started. (" + _nPlayers +" players)");
 		nPlayers = _nPlayers;//TODO: validar el rango de valores
 		this.ipHost = ipHost;
 		

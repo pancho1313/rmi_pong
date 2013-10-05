@@ -48,8 +48,8 @@ public class Client {
 	
 	
 	public static void main(String[] args) {
-		String ipHost = U.getFirstArg(args);
-		String ipGuest = U.getSecondArg(args);
+		String ipHost = U.getArg(args, 0, "192.168.2.14", "WARNING: no se ha especificado HOST.");
+		String ipGuest = U.getArg(args, 1, "192.168.2.14", "WARNING: no se ha especificado LOCALHOST.");
 		new Client(ipHost, ipGuest);
 	}
 	
