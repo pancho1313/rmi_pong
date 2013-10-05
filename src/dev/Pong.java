@@ -195,34 +195,46 @@ public class Pong implements KeyListener {
 			}
 		}
 
-		//rebote
+		//rebote TODO: mucho codigo duplicado!
 		if(ball.vx < 0 && ball.x + ball.vx < 0){//left pong
+			ball.vx = -ball.vx;
 			if(myPlayer.getPlayerId() == MyCanvas.LEFT_BLUE){
-				ball.vx = -ball.vx;
-			}else{
-				ball.vx = 0;
-				ball.vy = 0;
+				try {
+					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}else if(ball.vx > 0 && ball.x + ball.vx >= WIDTH){//right pong
+			ball.vx = -ball.vx;
 			if(myPlayer.getPlayerId() == MyCanvas.RIGHT_YELLOW){
-				ball.vx = -ball.vx;
-			}else{
-				ball.vx = 0;
-				ball.vy = 0;
+				try {
+					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}else if(ball.vy < 0 && ball.y + ball.vy < 0){//top pong
+			ball.vy = -ball.vy;
 			if(myPlayer.getPlayerId() == MyCanvas.TOP_GREEN){
-				ball.vy = -ball.vy;
-			}else{
-				ball.vx = 0;
-				ball.vy = 0;
+				try {
+					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}else if(ball.vy > 0 && ball.y + ball.vy >= HEIGHT){//bottom pong
+			ball.vy = -ball.vy;
 			if(myPlayer.getPlayerId() == MyCanvas.BOTTOM_RED){
-				ball.vy = -ball.vy;
-			}else{
-				ball.vx = 0;
-				ball.vy = 0;
+				try {
+					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}else{
 			ball.x += ball.vx;

@@ -78,7 +78,7 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	private void readyToPlay() throws RemoteException{
 		U.localMessage("Let's play!");
 		for(IPlayer p : players){
-			p.startNewGame(0.4,0.3);//TODO: random?
+			p.startNewGame(1,0.8);//TODO: random?
 			p.messageFromServer("Let's play!");
 		}
 	}
