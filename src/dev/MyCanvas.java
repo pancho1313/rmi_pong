@@ -68,7 +68,7 @@ public class MyCanvas extends Canvas {
         	/*algo();*/
         	break;
         case Player.SHOW_MATCH_RESULTS:
-        	/*algo();*/
+        	paintResults(g);
         	break;
         default:
         	/*algoDefault();*/
@@ -88,7 +88,7 @@ public class MyCanvas extends Canvas {
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		//texto
-		g.setColor(Color.WHITE);
+		g.setColor(Color.BLACK);
 		FontMetrics fm = g.getFontMetrics();
 	    fm = g.getFontMetrics();
 	    int w = fm.stringWidth(waitPlease);
@@ -122,5 +122,22 @@ public class MyCanvas extends Canvas {
 			    g.drawString(score, (int)bars[i].x - (w / 2), (int)bars[i].y + (h / 2));
 			}
 		}
+	}
+	
+	private void paintResults(Graphics g){
+		//waiting message
+		String waitPlease = "Results: again? y/n";
+		
+		//fondo
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		
+		//texto
+		g.setColor(Color.BLACK);
+		FontMetrics fm = g.getFontMetrics();
+	    fm = g.getFontMetrics();
+	    int w = fm.stringWidth(waitPlease);
+	    int h = fm.getAscent();
+	    g.drawString(waitPlease, (getWidth()/2) - (w / 2), (getHeight()/2) + (h / 4));
 	}
 }

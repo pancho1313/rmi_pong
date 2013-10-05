@@ -100,6 +100,7 @@ public class Pong implements KeyListener {
 			            	/*algo();*/
 			            	moveBall();
 			            	refreshScores();
+					        refreshEnemyDrawingPos();//actualizar las posiciones de los enemigos
 			            	break;
 			            case Player.GAME_OVER:
 			            	/*algo();*/
@@ -115,8 +116,7 @@ public class Pong implements KeyListener {
 			        //procesar el input del usuario
 			        userKeys(state);
 			        
-			        //actualizar las posiciones de los enemigos
-			        refreshEnemyDrawingPos();
+			        
 			        
 					//repintar el canvas
 					canvas.gameState = state;
@@ -354,33 +354,7 @@ public class Pong implements KeyListener {
             	break;
         }
 		//rebote TODO: revisar rebote en esquinas del tablero!
-        /*
-		if(ball.vx < 0 && ball.x + ball.vx < 0){//left pong
-			ball.vx = -ball.vx;
-			if(myPlayer.getPlayerId() == MyCanvas.LEFT_BLUE){
-				mustSendBallPos = true;
-			}
-		}else if(ball.vx > 0 && ball.x + ball.vx >= WIDTH){//right pong
-			ball.vx = -ball.vx;
-			if(myPlayer.getPlayerId() == MyCanvas.RIGHT_YELLOW){
-				mustSendBallPos = true;
-			}
-		}else if(ball.vy < 0 && ball.y + ball.vy < 0){//top pong
-			ball.vy = -ball.vy;
-			if(myPlayer.getPlayerId() == MyCanvas.TOP_GREEN){
-				mustSendBallPos = true;
-			}
-		}else if(ball.vy > 0 && ball.y + ball.vy >= HEIGHT){//bottom pong
-			ball.vy = -ball.vy;
-			if(myPlayer.getPlayerId() == MyCanvas.BOTTOM_RED){
-				mustSendBallPos = true;
-			}
-		}else{
-			ball.x += ball.vx;
-			ball.y += ball.vy;
-		}
-		*/
-		//////////////////////////////////////////////
+        
 		if(mustSendBallPos){
 			if(!missedBall){
 				ball.color = MyCanvas.COLORS[myPlayer.getPlayerId()];
@@ -453,7 +427,17 @@ public class Pong implements KeyListener {
          	/*algo();*/
          	break;
          case Player.SHOW_MATCH_RESULTS:
-         	/*algo();*/
+        	 if(keysPressed[KeyEvent.VK_Q] || keysPressed[KeyEvent.VK_N]){
+ 				exitGame();
+        	 }
+        	 if(keysPressed[KeyEvent.VK_Y]){
+        		 try {
+					pongServer.iWantToPlayAgain(myPlayer.getPlayerId());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	 }
          	break;
          default:
          	/*algoDefault();*/

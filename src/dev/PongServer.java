@@ -12,7 +12,6 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	private static final int WAITING_FOR_PLAYERS = 0;
 	private static final int PLAYING_MATCH = 1;
 	private static final int MATCH_FINISHED = 2;
-	private static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
 	
 	private int serverState;//estado del pongServer
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,8 +23,13 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	private int[] playersScore;
 	private int lastPlayerRebound;
 	
+	private int againPlayers;
 	private int activePlayers;
 	
+	private void reInitMatch(){
+		playersScore = new int[4];
+		lastPlayerRebound = -1;
+	}
 	
 	private boolean addToPlayers(IPlayer p){
 		for(int i = 0; i < players.length; i++){
@@ -51,7 +55,13 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		
 		if(activePlayers < nPlayers){
 			IPlayer newPlayer = null;
-			String playerPublicName = "rmi://"+ipHost+":1099/player"+activePlayers;
+			int idNewPlayer = 0;
+			for(int i = 0; i < players.length; i++){
+				if(players[i] == null){
+					idNewPlayer = i;
+				}
+			}
+			String playerPublicName = "rmi://"+ipHost+":1099/player"+idNewPlayer;
 			try {
 				Naming.rebind(playerPublicName, p);
 			} catch (MalformedURLException e) {
@@ -76,8 +86,8 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 				
 				if(serverState == WAITING_FOR_PLAYERS){
 					if(activePlayers == nPlayers){
-						startNewMatch();
 						serverState = PLAYING_MATCH;
+						startNewMatch();
 					}else{
 						int numPlayers = (nPlayers - activePlayers);
 						U.localMessage("Waiting " + numPlayers + ((numPlayers > 1)?" players.":" player."));
@@ -97,11 +107,8 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	private void startNewMatch() throws RemoteException{
 		U.localMessage("Let's play!");
 		
-		//reiniciar marcador
-		for(int i = 0; i < playersScore.length; i++){
-			playersScore[i] = 0;
-		}
-		
+		//reiniciar variables
+		reInitMatch();
 		
 		for(IPlayer p : players){
 			if(p != null){
@@ -117,15 +124,17 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	
 	public PongServer(int _nPlayers, String ipHost) throws RemoteException{
 		super();
+		U.localMessage("PongServer Started.");
 		nPlayers = _nPlayers;//TODO: validar el rango de valores
 		this.ipHost = ipHost;
+		
 		activePlayers = 0;
 		players = new IPlayer[4];
-		playersScore = new int[4];
-		lastPlayerRebound = -1;
+		
 		serverState = WAITING_FOR_PLAYERS;
-		U.localMessage("PongServer Started.");
 		U.localMessage("Waiting " + nPlayers + " players.");
+		
+		reInitMatch();
 	}
 	
 	/**
@@ -153,7 +162,16 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	}
 	
 	public boolean iWantToPlay(IPlayer p) throws RemoteException{
-		return addPlayer(p);
+		switch(serverState){
+		case WAITING_FOR_PLAYERS:
+			return addPlayer(p);
+		case PLAYING_MATCH:
+			return false;
+		case MATCH_FINISHED:
+			return false;
+		default:
+			return false;
+		}
 	}
 	
 	/**
@@ -210,14 +228,40 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 			}
 		}
 		
-		if(playersScore[playerId] == 10){//TODO: parametrizar puntaje de termino
+		if(playersScore[lastPlayerRebound] == 1){//TODO: parametrizar puntaje de termino
 			gameOver();
 		}
 	}
 	
 	private void gameOver(){
 		serverState = MATCH_FINISHED;
+		againPlayers = 0;
 		
-		//TODO:
+		for(int id = 0; id < players.length; id++){
+			IPlayer player = players[id];
+			if(player != null){
+				try {
+					player.showMatchResults();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	
+	}
+	
+	public void iWantToPlayAgain(int playerId) throws RemoteException{
+		if(serverState == MATCH_FINISHED){
+			//TODO: lo registra como preparado
+			againPlayers++;
+			players[playerId].preNewGame();
+			
+			//nadie guatio
+			if(againPlayers == nPlayers){
+			 startNewMatch();
+			}
+		}
 	}
 }
