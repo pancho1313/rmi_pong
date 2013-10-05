@@ -99,5 +99,8 @@ public class MyCanvas extends Canvas {
 		for (Bar rectangle : bars) {
 			rectangle.draw(g);
 		}
+		
+		g.setColor(Color.WHITE);
+		ball.draw(g);
 	}
 }
