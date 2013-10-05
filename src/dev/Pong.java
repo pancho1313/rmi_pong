@@ -3,6 +3,7 @@ package dev;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Arrays;
@@ -168,6 +169,7 @@ public class Pong implements KeyListener {
 		}
 	}
 	
+	
 	/**
 	 * procesa el movimiento de la pelota.
 	 * */
@@ -182,6 +184,25 @@ public class Pong implements KeyListener {
 			ball.vx = myPlayer.ballParameters[2];
 			ball.vy = myPlayer.ballParameters[3];
 			
+			//TODO: este es un ajuste manual de colores
+			switch((int)myPlayer.ballParameters[4]){
+			case 0:
+				ball.color = Color.BLUE;
+				break;
+			case 1:
+				ball.color = Color.YELLOW;
+				break;
+			case 2:
+				ball.color = Color.RED;
+				break;
+			case 3:
+				ball.color = Color.GREEN;
+				break;
+			default:
+				ball.color = Color.WHITE;
+				break;
+			}
+			
 			//ajustar a los limites del tablero
 			if(ball.x < 0){
 				ball.x = 1;
@@ -195,83 +216,178 @@ public class Pong implements KeyListener {
 			}
 		}
 
-		//rebote TODO: mucho codigo duplicado!
+		boolean mustSendBallPos = false;
+		boolean missedBall = true;
+		double nextBallX = ball.x + ball.vx;
+		double nextBallY = ball.y + ball.vy;
+		int bar = myPlayer.getPlayerId();
+        switch(bar){
+            case MyCanvas.LEFT_BLUE:
+            	if(ball.vx < 0){
+            		if(nextBallX < myBar.right()){
+            			if(nextBallY <= myBar.bottom() && nextBallY >= myBar.top()){//myBar pong
+	            			missedBall = false;
+	            			ball.vx = -ball.vx;//TODO: recalcular...
+	            			ball.y += ball.vy;//TODO: recalcular...
+	            			mustSendBallPos = true;
+	            			break;
+            			}else if(nextBallX < 0){//wall pong
+            				missedBall = true;
+            				ball.vx = -ball.vx;
+            				mustSendBallPos = true;
+	            			break;
+            			}
+            		}
+            		ball.x = nextBallX;
+            	}else{
+            		//rebote horizontal con pared
+                	if(nextBallX >= WIDTH){
+                		ball.vx = -ball.vx;
+                	}
+                	ball.x += ball.vx;
+            	}
+            	
+            	//rebote vertical con paredes
+            	if(nextBallY < 0 || nextBallY >= HEIGHT){
+            		ball.vy = -ball.vy;
+            	}
+            	ball.y += ball.vy;
+            	/*algo();*/
+            	break;
+            case MyCanvas.RIGHT_YELLOW:
+            	if(ball.vx > 0){
+            		if(nextBallX > myBar.left()){
+            			if(nextBallY <= myBar.bottom() && nextBallY >= myBar.top()){//myBar pong
+	            			missedBall = false;
+	            			ball.vx = -ball.vx;//TODO: recalcular...
+	            			ball.y += ball.vy;//TODO: recalcular...
+	            			mustSendBallPos = true;
+	            			break;
+            			}else if(nextBallX >= WIDTH){//wall pong
+            				missedBall = true;
+            				ball.vx = -ball.vx;
+            				mustSendBallPos = true;
+	            			break;
+            			}
+            		}
+            		ball.x = nextBallX;
+            	}else{
+            		//rebote horizontal con pared
+                	if(nextBallX < 0){
+                		ball.vx = -ball.vx;
+                	}
+                	ball.x += ball.vx;
+            	}
+            	
+            	//rebote vertical con paredes
+            	if(nextBallY < 0 || nextBallY >= HEIGHT){
+            		ball.vy = -ball.vy;
+            	}
+            	ball.y += ball.vy;
+            	break;
+            case MyCanvas.TOP_GREEN:
+            	if(ball.vy < 0){
+            		if(nextBallY < myBar.bottom()){
+            			if(nextBallX <= myBar.right() && nextBallX >= myBar.left()){//myBar pong
+	            			missedBall = false;
+	            			ball.vy = -ball.vy;//TODO: recalcular...
+	            			ball.x += ball.vx;//TODO: recalcular...
+	            			mustSendBallPos = true;
+	            			break;
+            			}else if(nextBallY < 0){//wall pong
+            				missedBall = true;
+            				ball.vy = -ball.vy;
+            				mustSendBallPos = true;
+	            			break;
+            			}
+            		}
+            		ball.y = nextBallY;
+            	}else{
+            		//rebote vertical con pared
+                	if(nextBallY >= HEIGHT){
+                		ball.vy = -ball.vy;
+                	}
+                	ball.y += ball.vy;
+            	}
+            	
+            	//rebote horizontal con paredes
+            	if(nextBallX < 0 || nextBallX >= WIDTH){
+            		ball.vx = -ball.vx;
+            	}
+            	ball.x += ball.vx;
+            	break;
+            case MyCanvas.BOTTOM_RED:
+            	if(ball.vy > 0){
+            		if(nextBallY > myBar.top()){
+            			if(nextBallX <= myBar.right() && nextBallX >= myBar.left()){//myBar pong
+	            			missedBall = false;
+	            			ball.vy = -ball.vy;//TODO: recalcular...
+	            			ball.x += ball.vx;//TODO: recalcular...
+	            			mustSendBallPos = true;
+	            			break;
+            			}else if(nextBallY >= HEIGHT){//wall pong
+            				missedBall = true;
+            				ball.vy = -ball.vy;
+            				mustSendBallPos = true;
+	            			break;
+            			}
+            		}
+            		ball.y = nextBallY;
+            	}else{
+            		//rebote horizontal con pared
+                	if(nextBallY < 0){
+                		ball.vy = -ball.vy;
+                	}
+                	ball.y += ball.vy;
+            	}
+            	
+            	//rebote vertical con paredes
+            	if(nextBallX < 0 || nextBallX >= WIDTH){
+            		ball.vx = -ball.vx;
+            	}
+            	ball.x += ball.vx;
+            	break;
+            default:
+            	/*algoDefault();*/
+            	break;
+        }
+		//rebote TODO: revisar rebote en esquinas del tablero!
+        /*
 		if(ball.vx < 0 && ball.x + ball.vx < 0){//left pong
 			ball.vx = -ball.vx;
 			if(myPlayer.getPlayerId() == MyCanvas.LEFT_BLUE){
-				try {
-					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				mustSendBallPos = true;
 			}
 		}else if(ball.vx > 0 && ball.x + ball.vx >= WIDTH){//right pong
 			ball.vx = -ball.vx;
 			if(myPlayer.getPlayerId() == MyCanvas.RIGHT_YELLOW){
-				try {
-					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				mustSendBallPos = true;
 			}
 		}else if(ball.vy < 0 && ball.y + ball.vy < 0){//top pong
 			ball.vy = -ball.vy;
 			if(myPlayer.getPlayerId() == MyCanvas.TOP_GREEN){
-				try {
-					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				mustSendBallPos = true;
 			}
 		}else if(ball.vy > 0 && ball.y + ball.vy >= HEIGHT){//bottom pong
 			ball.vy = -ball.vy;
 			if(myPlayer.getPlayerId() == MyCanvas.BOTTOM_RED){
-				try {
-					pongServer.refreshBall(myPlayer.getPlayerId(), false, ball.x, ball.y, ball.vx, ball.vy);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				mustSendBallPos = true;
 			}
 		}else{
 			ball.x += ball.vx;
 			ball.y += ball.vy;
 		}
-
-		
-/*
-		for (int i = 0; i < bars.size(); i++) {
-			Bar bar = bars.get(i);
-			if (ball.bottom() < bar.top()
-					&& ball.top() > bar.bottom()) { // esta dentro
-													// en
-													// Y
-				if ((vx > 0 && ball.left() <= bar.left() && ball
-						.right() >= bar.left()) // esta a la
-												// izquierda y se
-												// mueve a la
-												// derecha
-						// o esta a la derecha y se mueve hacia la
-						// izquierda
-						|| (vx < 0 && ball.right() >= bar.right() && ball
-								.left() <= bar.right())) {
-
-					vx = -vx * (1 + DV);
-					break;
-				}
+		*/
+		//////////////////////////////////////////////
+		if(mustSendBallPos){
+			try {
+				pongServer.refreshBall(myPlayer.getPlayerId(), missedBall, ball.x, ball.y, ball.vx, ball.vy);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-*/
-		/*
-		 * for (Rectangle bar : bars) { if (ball.x + ball.w * 0.5 >
-		 * bar.x - bar.w * 0.5 && ball.x - ball.w * 0.5 > bar.x +
-		 * bar.w * 0.5) { if ((vy > 0 && ball.y + ball.h * 0.5 >=
-		 * bar.y - bar.h * 0.5) || (vy < 0 && ball.y - ball.h * 0.5
-		 * <= bar.y + bar.h * 0.5)) { vy = -vy; break; } } }
-		 */
+
 	}
 	
 	/**

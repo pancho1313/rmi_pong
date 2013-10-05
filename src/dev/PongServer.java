@@ -150,10 +150,10 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	 * ademas informa si el player perdio la bola.
 	 * */
 	public void refreshBall(int playerId, boolean missedBall, double x, double y, double vx, double vy) throws RemoteException{
-		//TODO: misseBall...
+		//TODO: missedBall...
 		for(int id = 0; id < players.size(); id++){
 			if(id != playerId){//TODO: quizas se pueda aniadir un filtro de jugadores activos?
-				players.get(id).refreshBall(x, y, vx, vy);
+				players.get(id).refreshBall(playerId, x, y, vx, vy);
 			}
 		}
 	}

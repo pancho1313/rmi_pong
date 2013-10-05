@@ -41,12 +41,14 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		runUserWindow = false;
 	}
 	
-	private void setBall(double x, double y, double vx, double vy){
+	private void setBall(int enemyId, double x, double y, double vx, double vy){
 		refreshBall = true;
+		
 		ballParameters[0] = x;
 		ballParameters[1] = y;
 		ballParameters[2] = vx;
 		ballParameters[3] = vy;
+		ballParameters[4] = (double)enemyId;
 	}
 	
 	/**
@@ -62,7 +64,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
 		activePlayers = new boolean[4];//inicialmente false
 		refreshBall = false;
-		ballParameters = new double[4];//[x,y,vx,vy]
+		ballParameters = new double[5];//[x,y,vx,vy,color]
 	}
 	
 	public void messageFromServer(String message) throws RemoteException{
@@ -110,7 +112,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	}
 	
 	public void startNewGame(double ballVX, double ballVY) throws RemoteException{
-		setBall(10,30,ballVX,ballVY);//TODO: empezar desde la mitad del tablero
+		setBall(-1, 10,30,ballVX,ballVY);//TODO: empezar desde la mitad del tablero
 		setGameState(this.BRACE_YOURSELF);
 	}
 	
@@ -127,8 +129,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	/**
 	 * actualiza la posicion de la bola luego de un rebote "ajeno".
 	 * */
-	public void refreshBall(double x, double y, double vx, double vy) throws RemoteException{
-		setBall(x,y,vx,vy);
+	public void refreshBall(int enemyId, double x, double y, double vx, double vy) throws RemoteException{
+		setBall(enemyId,x,y,vx,vy);
 	}
 	
 }
