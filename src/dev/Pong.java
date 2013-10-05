@@ -91,6 +91,10 @@ public class Pong implements KeyListener {
 			            case Player.WAITING_NEW_MATCH:
 			            	/*algo();*/
 			            	break;
+			            case Player.BRACE_YOURSELF:
+			            	sendMyBarPos();
+			            	myPlayer.setGameState(Player.PLAYING_MATCH);
+			            	break;
 			            case Player.PLAYING_MATCH:
 			            	/*algo();*/
 			            	moveBall();

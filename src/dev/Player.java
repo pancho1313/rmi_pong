@@ -16,9 +16,10 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	private int id = -1;//TODO: verificar correctitud (el -1 podría servir para debug)
 	
 	public static final int WAITING_NEW_MATCH = 0;
-	public static final int PLAYING_MATCH = 1;
-	public static final int MATCH_FINISHED = 2;
-	public static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
+	public static final int BRACE_YOURSELF = 1;
+	public static final int PLAYING_MATCH = 2;
+	public static final int MATCH_FINISHED = 3;
+	public static final int SHOW_MATCH_RESULTS = 4;//TODO: opcion para jugar de nuevo?
 	
 	public double[][] barsPos;
 	public boolean[] activePlayers;//para saber a que players considerar en la partida
@@ -50,7 +51,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		runUserWindow = true;
 		gameState = WAITING_NEW_MATCH;
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
-		activePlayers = new boolean[4];
+		activePlayers = new boolean[4];//inicialmente false
 		
 	}
 	
@@ -67,7 +68,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		return id;
 	}
 	
-	private void setGameState(int newState){
+	public void setGameState(int newState){
 		gameState = newState;
 	}
 	
@@ -99,13 +100,15 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	}
 	
 	public void startNewGame() throws RemoteException{
-		setGameState(this.PLAYING_MATCH);
+		setGameState(this.BRACE_YOURSELF);
 	}
+	
 	
 	/**
 	 * actualiza el registro de posiciones de bars.
 	 * */
 	public void refreshEnemyPos(int enemyId, double x, double y) throws RemoteException{
+		this.activePlayers[enemyId] = true;//TODO: eto desperdicia el sistema local
 		barsPos[enemyId][0] = x;
 		barsPos[enemyId][1] = y;
 	}
