@@ -27,6 +27,7 @@ public class Client {
 				startPongWindow();
 			}else{
 				U.localMessage("Not now my friend, go home.");
+				System.exit(0);
 			}
 			
 		} catch (MalformedURLException e) {

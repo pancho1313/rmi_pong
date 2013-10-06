@@ -19,12 +19,13 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	//private static final long serialVersionUID = 6311160989789331741L;
 	private int nPlayers = 0;
 	private String ipHost;
+	
 	private IPlayer[] players;
 	private int[] playersScore;
 	private int lastPlayerRebound;
-	
 	private int againPlayers;
 	private int activePlayers;
+	//////////////////////////////////////////////////////////////////////////////////////////////
 	
 	private void reInitMatch(){
 		playersScore = new int[4];
@@ -178,7 +179,17 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	 * Usado para gestionar la correcta salida de un player
 	 * */
 	public void iWantToLeave(int playerId) throws RemoteException{
-		players[playerId].closePlayer();
+		switch(serverState){
+		case WAITING_FOR_PLAYERS:
+			//TODO: ...
+			break;
+		case PLAYING_MATCH:
+			
+			players[playerId].closePlayer();
+			break;
+		case MATCH_FINISHED:
+			break;
+		}
 	}
 	
 	/**
