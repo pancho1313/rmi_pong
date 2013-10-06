@@ -43,6 +43,10 @@ public class MyCanvas extends Canvas {
 		this.setSize(WIDTH, HEIGHT);
 		
 		//default values
+		reset();
+	}
+	
+	public void reset(){
 		ballColor = Color.WHITE;
 		ball = new Bar(getWidth() / 2, getHeight() / 2, 10, 10, ballColor);
 		bars = new Bar[4];
@@ -65,12 +69,14 @@ public class MyCanvas extends Canvas {
         	paintPlaying(g);
         	break;
         case Player.GAME_OVER:
+        	paintGameOver(g);
         	/*algo();*/
         	break;
         case Player.SHOW_MATCH_RESULTS:
         	paintResults(g);
         	break;
         default:
+        	blank(g);
         	/*algoDefault();*/
         	break;
     }
@@ -79,12 +85,35 @@ public class MyCanvas extends Canvas {
 
 	}
 	
+	private void paintGameOver(Graphics g){
+		//waiting message
+		String waitPlease = "No more PONG for today!";
+		
+		//fondo
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		
+		//texto
+		g.setColor(Color.WHITE);
+		FontMetrics fm = g.getFontMetrics();
+	    fm = g.getFontMetrics();
+	    int w = fm.stringWidth(waitPlease);
+	    int h = fm.getAscent();
+	    g.drawString(waitPlease, (getWidth()/2) - (w / 2), (getHeight()/2) + (h / 4));
+	}
+	
+	private void blank(Graphics g){
+		//fondo
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, getWidth(), getHeight());
+	}
+	
 	private void paintWaiting(Graphics g){
 		//waiting message
 		String waitPlease = "Waiting more players...";
 		
 		//fondo
-		g.setColor(bars[myPlayerId].color);
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		//texto

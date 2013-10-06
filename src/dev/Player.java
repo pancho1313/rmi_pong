@@ -20,6 +20,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	public static final int PLAYING_MATCH = 2;
 	public static final int SHOW_MATCH_RESULTS = 3;//TODO: opcion para jugar de nuevo?
 	public static final int GAME_OVER = 4;
+	public static final int RESET = 5;
 	
 	
 	public boolean refreshEnemyBars;
@@ -66,8 +67,9 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 		super();
 		
 		//variables de estado
-		runUserWindow = true;
+		
 		reInit();
+		gameState = WAITING_NEW_MATCH;
 	}
 	
 	public void messageFromServer(String message) throws RemoteException{
@@ -111,7 +113,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	
 	
 	private void reInit(){
-		gameState = WAITING_NEW_MATCH;
+		runUserWindow = true;
+		gameState = RESET;
 		refreshEnemyBars = false;
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
 		activePlayers = new boolean[4];//inicialmente false
@@ -129,8 +132,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	}
 	
 	public void startNewGame(double ballVX, double ballVY) throws RemoteException{
+		reInit();
 		setBall(-1, false, 10,30,ballVX,ballVY);//TODO: empezar desde la mitad del tablero
-		setGameState(BRACE_YOURSELF);
 	}
 	
 	

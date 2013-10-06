@@ -33,15 +33,28 @@ public class Pong implements KeyListener {
 	//TODO: is this right?
 	private Player myPlayer;
 	private IPongServer pongServer;
+	private boolean suicide;
 
-	public Pong(Player _myPlayer, IPongServer _pongServer) {
-
+	private void reset(){
 		keysPressed = new boolean[KeyEvent.KEY_LAST];
 		keysReleased = new boolean[KeyEvent.KEY_LAST];
+		suicide = false;
+		canvas.reset();
+		canvas.myPlayerId = myPlayer.getPlayerId();
+		bars = canvas.bars;
+		myBar = bars[myPlayer.getPlayerId()];//TODO: ojo con una posible reasignacion de bars
+		ball = canvas.ball;
+	}
+	
+	public Pong(Player _myPlayer, IPongServer _pongServer) {
 
 		myPlayer = _myPlayer;
 		pongServer = _pongServer;
 		
+		
+		keysPressed = new boolean[KeyEvent.KEY_LAST];
+		keysReleased = new boolean[KeyEvent.KEY_LAST];
+		suicide = false;
 		init();
 
 	}
@@ -56,13 +69,11 @@ public class Pong implements KeyListener {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		canvas = new MyCanvas(WIDTH, HEIGHT);
-		canvas.myPlayerId = myPlayer.getPlayerId();
 		frame.add(canvas);
+		
+		reset();//no mover de aqui!
 
-		//canvas.setSize(WIDTH, HEIGHT);
-		bars = canvas.bars;
-		myBar = bars[myPlayer.getPlayerId()];//TODO: ojo con una posible reasignacion de bars
-		ball = canvas.ball;
+		
 
 		frame.pack();
 		frame.addKeyListener(this);
@@ -84,7 +95,7 @@ public class Pong implements KeyListener {
 
 			@Override
 			public void run(){
-				while (myPlayer.showPlayerInterface()){
+				while (myPlayer.showPlayerInterface() && !suicide){
 					
 					/* decidir que hacer segun el estado del juego */
 					int state = myPlayer.getGameState();
@@ -102,7 +113,11 @@ public class Pong implements KeyListener {
 			            	refreshEnemyDrawingPos();//actualizar las posiciones de los enemigos
 			            	refreshScores();
 			            	break;
-			            case Player.GAME_OVER:
+			            case Player.RESET:
+			            	//reiniciar variables
+			            	reset();
+			            	myPlayer.setGameState(Player.BRACE_YOURSELF);
+			            	state = Player.WAITING_NEW_MATCH;
 			            	/*algo();*/
 			            	break;
 			            case Player.SHOW_MATCH_RESULTS:
@@ -425,15 +440,25 @@ public class Pong implements KeyListener {
          	/*algo();*/
          	break;
          case Player.GAME_OVER:
+        	 if(keysPressed[KeyEvent.VK_Q]){
+         		
+  				suicide = true;
+         	 }
          	/*algo();*/
          	break;
          case Player.SHOW_MATCH_RESULTS:
         	 if(keysPressed[KeyEvent.VK_Q] || keysPressed[KeyEvent.VK_N]){
- 				exitGame();
+        		
+ 				suicide = true;
         	 }
         	 if(keysPressed[KeyEvent.VK_Y]){
+        		 //reset();
+        		 myPlayer.setGameState(Player.WAITING_NEW_MATCH);
         		 try {
-					pongServer.iWantToPlayAgain(myPlayer.getPlayerId());
+					//pongServer.iWantToPlayAgain(myPlayer.getPlayerId());
+        			 if(!pongServer.iWantToPlay(myPlayer)){
+        				 myPlayer.setGameState(Player.GAME_OVER);
+        			 }
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
