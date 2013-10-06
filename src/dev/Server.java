@@ -12,6 +12,7 @@ public class Server {
 	public static void main(String[] args) {
 		String ipHost = U.getArg(args, 0, "192.168.2.14", "WARNING: no se ha especificado HOST.");
 		String nPlayers = U.getArg(args, 1, "2", "WARNING: no se ha especificado la cantidad de jugadores!");
+		//String wScore = U.getArg(args, 2, "10", "WARNING: no se ha especificado el puntaje para ganar! 2/5/10");
 		
 		int numPlayers;
 		if(nPlayers.equals("2")){
@@ -28,7 +29,7 @@ public class Server {
 		
 		try {
 			System.setProperty("java.rmi.server.hostname", ipHost);
-			IPongServer pongServer = new PongServer(numPlayers, ipHost);
+			IPongServer pongServer = new PongServer(numPlayers, 1, ipHost);
 			Naming.rebind("rmi://localhost:1099/PongServer", pongServer);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block

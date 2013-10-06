@@ -125,19 +125,48 @@ public class MyCanvas extends Canvas {
 	}
 	
 	private void paintResults(Graphics g){
+		
+		for(int i = 0; i < scores.length; i++){
+			if(!bars[i].hidden){
+				bars[i].x = (getWidth()/2);
+				bars[i].y = (getHeight()/2)+(30*i);
+				bars[i].w = 200;
+				bars[i].h = 20;
+			}
+		}
+		///////////////////////////
+		
 		//waiting message
-		String waitPlease = "Results: again? y/n";
+		String again = "Pong again? y/n";
 		
 		//fondo
-		g.setColor(Color.DARK_GRAY);
+		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		//texto
-		g.setColor(Color.BLACK);
+		g.setColor(Color.WHITE);
 		FontMetrics fm = g.getFontMetrics();
 	    fm = g.getFontMetrics();
-	    int w = fm.stringWidth(waitPlease);
+	    int w = fm.stringWidth(again);
 	    int h = fm.getAscent();
-	    g.drawString(waitPlease, (getWidth()/2) - (w / 2), (getHeight()/2) + (h / 4));
+	    g.drawString(again, (getWidth()/2) - (w / 2), (getHeight()/4)*3 + (h / 4));
+	    
+	  //bars
+		for (Bar rectangle : bars) {
+			rectangle.draw(g);
+		}
+	    
+	  //scores
+		for(int i = 0; i < scores.length; i++){
+			String score = scores[i] + "";
+			if(!bars[i].hidden){
+				g.setColor(Color.BLACK);
+				fm = g.getFontMetrics();
+			    fm = g.getFontMetrics();
+			    w = fm.stringWidth(score);
+			    h = fm.getAscent();
+			    g.drawString(score, (int)bars[i].x - (w / 2), (int)bars[i].y + (h / 2));
+			}
+		}
 	}
 }

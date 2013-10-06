@@ -106,7 +106,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	public void closePlayer() throws RemoteException{
 		closeUserWindow();
 		U.localMessage("...Game Over");
-		System.exit(0);
+		//System.exit(0);
 	}
 	
 	

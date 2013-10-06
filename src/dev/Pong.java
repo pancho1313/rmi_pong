@@ -71,7 +71,7 @@ public class Pong implements KeyListener {
 			    @Override
 			    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 			    	try {
-						pongServer.iWantToLeave(myPlayer.getPlayerId());
+						pongServer.iWantToQuit(myPlayer.getPlayerId());
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -163,7 +163,7 @@ public class Pong implements KeyListener {
 	 * */
 	private void exitGame(){
 		try {
-			pongServer.iWantToLeave(myPlayer.getPlayerId());
+			pongServer.iWantToQuit(myPlayer.getPlayerId());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

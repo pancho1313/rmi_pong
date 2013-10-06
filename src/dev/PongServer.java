@@ -17,7 +17,8 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//private static final long serialVersionUID = 6311160989789331741L;
-	private int nPlayers = 0;
+	private int nPlayers;
+	private int winScore;
 	private String ipHost;
 	
 	private IPlayer[] players;
@@ -52,36 +53,9 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	}
 	
 	
-	private boolean addPlayer(IPlayer p) throws RemoteException{
+	private boolean addPlayer(IPlayer newPlayer) throws RemoteException{
 		
 		if(activePlayers < nPlayers){
-			IPlayer newPlayer = null;
-			int idNewPlayer = 0;
-			for(int i = 0; i < players.length; i++){
-				if(players[i] == null){
-					idNewPlayer = i;
-				}
-			}
-			String playerPublicName = "rmi://"+ipHost+":1099/player"+idNewPlayer;
-			try {
-				Naming.rebind(playerPublicName, p);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			try {
-				newPlayer = (IPlayer) Naming.lookup(playerPublicName);
-				newPlayer.messageFromServer("Welcome to Pong.");
-				newPlayer.messageFromServer("Waiting for more players...");
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			if(newPlayer != null){//el player fue correctamente inicializado
 				addToPlayers(newPlayer);
 				
@@ -92,6 +66,15 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 					}else{
 						int numPlayers = (nPlayers - activePlayers);
 						U.localMessage("Waiting " + numPlayers + ((numPlayers > 1)?" players.":" player."));
+					}
+				}else if(serverState == PLAYING_MATCH){
+					newPlayer.preNewGame();
+					
+					for(IPlayer p : players){
+						if(p != null){
+							p.startNewGame(1,0.8);//TODO: random?
+							p.messageFromServer("Let's play!");
+						}
 					}
 				}
 				
@@ -123,11 +106,12 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	
 	static MyUtil U = new MyUtil();
 	
-	public PongServer(int _nPlayers, String ipHost) throws RemoteException{
+	public PongServer(int _nPlayers, int winScore, String ipHost) throws RemoteException{
 		super();
 		U.localMessage("PongServer Started. (" + _nPlayers +" players)");
 		nPlayers = _nPlayers;//TODO: validar el rango de valores
 		this.ipHost = ipHost;
+		this.winScore = winScore;
 		
 		activePlayers = 0;
 		players = new IPlayer[4];
@@ -167,7 +151,7 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 		case WAITING_FOR_PLAYERS:
 			return addPlayer(p);
 		case PLAYING_MATCH:
-			return false;
+			return addPlayer(p);
 		case MATCH_FINISHED:
 			return false;
 		default:
@@ -178,12 +162,14 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 	/**
 	 * Usado para gestionar la correcta salida de un player
 	 * */
-	public void iWantToLeave(int playerId) throws RemoteException{
+	public void iWantToQuit(int playerId) throws RemoteException{
+		
 		switch(serverState){
 		case WAITING_FOR_PLAYERS:
 			//TODO: ...
 			break;
 		case PLAYING_MATCH:
+			
 			players[playerId].closePlayer();
 			players[playerId] = null;
 			playersScore[playerId] = 0;
@@ -191,24 +177,17 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 				lastPlayerRebound = -1;
 			activePlayers--;
 			
-			try {
-				Naming.unbind("rmi://"+ipHost+":1099/player"+playerId);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			if(activePlayers < 2){
 				//TODO: que hacer si todos se van???
 			}
+			
+			U.localMessage("player"+ playerId+" quit.");
 			
 			//avisar al resto
 			for(int i = 0; i < players.length; i++){
 				IPlayer p = players[i];
 				if(p != null && i != playerId){
+					U.localMessage("aviso a player " +i);
 					p.enemyGone(playerId);
 				}
 			}
@@ -267,13 +246,13 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 			}
 		}
 		
-		if(lastPlayerRebound>=0 && playersScore[lastPlayerRebound] == 1){//TODO: parametrizar puntaje de termino
+		if(lastPlayerRebound>=0 && playersScore[lastPlayerRebound] == winScore){//TODO: parametrizar puntaje de termino
 			gameOver();
 		}
 	}
 	
 	private void gameOver(){
-		serverState = MATCH_FINISHED;
+		serverState = (activePlayers==nPlayers) ? MATCH_FINISHED : WAITING_FOR_PLAYERS;
 		againPlayers = 0;
 		
 		for(int id = 0; id < players.length; id++){
