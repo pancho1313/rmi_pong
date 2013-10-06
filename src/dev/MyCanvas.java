@@ -124,18 +124,9 @@ public class MyCanvas extends Canvas {
 		}
 	}
 	
+	
+	
 	private void paintResults(Graphics g){
-		
-		for(int i = 0; i < scores.length; i++){
-			if(!bars[i].hidden){
-				bars[i].x = (getWidth()/2);
-				bars[i].y = (getHeight()/2)+(30*i);
-				bars[i].w = 200;
-				bars[i].h = 20;
-			}
-		}
-		///////////////////////////
-		
 		//waiting message
 		String again = "Pong again? y/n";
 		
@@ -151,22 +142,51 @@ public class MyCanvas extends Canvas {
 	    int h = fm.getAscent();
 	    g.drawString(again, (getWidth()/2) - (w / 2), (getHeight()/4)*3 + (h / 4));
 	    
-	  //bars
-		for (Bar rectangle : bars) {
-			rectangle.draw(g);
-		}
-	    
-	  //scores
+	    /////////////////////////////////////////////////////
+		
+		ArrayList<ArrayList<Integer>> scoreBar = new ArrayList<ArrayList<Integer>>();
 		for(int i = 0; i < scores.length; i++){
-			String score = scores[i] + "";
-			if(!bars[i].hidden){
+			ArrayList<Integer> sB = new ArrayList<Integer>();
+			sB.add(scores[i]);
+			sB.add(i);
+			scoreBar.add(sB);
+		}
+		
+		for(int i = 0; i < scores.length; i++){
+			int max = -1;
+			int idMax = 0;
+			for(int j = 0; j < scoreBar.size(); j++){
+				int sBMax = scoreBar.get(j).get(0); 
+				if(sBMax > max){
+					max = sBMax;
+					idMax = j;
+				}
+			}
+			
+			//dibujar rect
+			int rId = scoreBar.get(idMax).get(1);
+			Bar r = new Bar(getWidth()/2, (getHeight() / 2) + (i*30), 200, 20, bars[rId].color);
+			String score = "" + scoreBar.get(idMax).get(0);;
+			
+			if(!bars[rId].hidden){
+				r.draw(g);
 				g.setColor(Color.BLACK);
 				fm = g.getFontMetrics();
 			    fm = g.getFontMetrics();
 			    w = fm.stringWidth(score);
 			    h = fm.getAscent();
-			    g.drawString(score, (int)bars[i].x - (w / 2), (int)bars[i].y + (h / 2));
+			    g.drawString(score, (int)r.x - (w / 2), (int)r.y + (h / 2));
+			    
 			}
+			
+			
+			scoreBar.remove(idMax);
 		}
+		
+		
+		///////////////////////////
+		
+		
+
 	}
 }

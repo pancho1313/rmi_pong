@@ -106,6 +106,7 @@ public class Pong implements KeyListener {
 			            	/*algo();*/
 			            	break;
 			            case Player.SHOW_MATCH_RESULTS:
+			            	refreshScores();
 			            	/*algo();*/
 			            	break;
 			            default:
