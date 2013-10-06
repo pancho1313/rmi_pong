@@ -184,10 +184,38 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 			//TODO: ...
 			break;
 		case PLAYING_MATCH:
-			
 			players[playerId].closePlayer();
+			players[playerId] = null;
+			playersScore[playerId] = 0;
+			if(lastPlayerRebound == playerId)
+				lastPlayerRebound = -1;
+			activePlayers--;
+			
+			try {
+				Naming.unbind("rmi://"+ipHost+":1099/player"+playerId);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(activePlayers < 2){
+				//TODO: que hacer si todos se van???
+			}
+			
+			//avisar al resto
+			for(int i = 0; i < players.length; i++){
+				IPlayer p = players[i];
+				if(p != null && i != playerId){
+					p.enemyGone(playerId);
+				}
+			}
+			
 			break;
 		case MATCH_FINISHED:
+			//TODO:...
 			break;
 		}
 	}

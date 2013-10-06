@@ -22,6 +22,7 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	public static final int GAME_OVER = 4;
 	
 	
+	public boolean refreshEnemyBars;
 	public double[][] barsPos;
 	public boolean[] activePlayers;//para saber a que players considerar en la partida
 	public boolean refreshScores;
@@ -104,11 +105,14 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	 * */
 	public void closePlayer() throws RemoteException{
 		closeUserWindow();
+		U.localMessage("...Game Over");
+		System.exit(0);
 	}
 	
 	
 	private void reInit(){
 		gameState = WAITING_NEW_MATCH;
+		refreshEnemyBars = false;
 		barsPos = new double[4][2];//4 players, 2 coordenadas cada uno
 		activePlayers = new boolean[4];//inicialmente false
 		scores = new int[4];
@@ -134,7 +138,8 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	 * actualiza el registro de posiciones de bars.
 	 * */
 	public void refreshEnemyPos(int enemyId, double x, double y) throws RemoteException{
-		this.activePlayers[enemyId] = true;//TODO: eto desperdicia el sistema local
+		refreshEnemyBars = true;
+		activePlayers[enemyId] = true;//TODO: eto desperdicia el sistema local
 		barsPos[enemyId][0] = x;
 		barsPos[enemyId][1] = y;
 	}
@@ -153,5 +158,11 @@ public class Player extends UnicastRemoteObject implements IPlayer{
 	
 	public void showMatchResults() throws RemoteException{
 		setGameState(SHOW_MATCH_RESULTS);
+	}
+	
+	public void enemyGone(int enemyId) throws RemoteException{
+		scores[enemyId] = 0;
+		activePlayers[enemyId] = false;
+		refreshEnemyBars = true;
 	}
 }

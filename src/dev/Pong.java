@@ -99,8 +99,8 @@ public class Pong implements KeyListener {
 			            case Player.PLAYING_MATCH:
 			            	/*algo();*/
 			            	moveBall();
+			            	refreshEnemyDrawingPos();//actualizar las posiciones de los enemigos
 			            	refreshScores();
-					        refreshEnemyDrawingPos();//actualizar las posiciones de los enemigos
 			            	break;
 			            case Player.GAME_OVER:
 			            	/*algo();*/
@@ -461,15 +461,19 @@ public class Pong implements KeyListener {
 	  * actualiza las posiciones de los enemigos segun la info del myPlayer asociado.
 	  * */
 	 private void refreshEnemyDrawingPos(){
-		 for(int id = 0; id < bars.length; id++){
-			 if(id != myPlayer.getPlayerId()){
-				 Bar enemyBar = bars[id];
-				 if(!myPlayer.activePlayers[id]){
-					 enemyBar.hidden = true;
-				 }else{
-					 enemyBar.hidden = false;
-					 enemyBar.x = myPlayer.barsPos[id][0];
-					 enemyBar.y = myPlayer.barsPos[id][1];
+		 if(myPlayer.refreshEnemyBars){
+			 myPlayer.refreshEnemyBars = false;
+			 
+			 for(int id = 0; id < bars.length; id++){
+				 if(id != myPlayer.getPlayerId()){
+					 Bar enemyBar = bars[id];
+					 if(!myPlayer.activePlayers[id]){
+						 enemyBar.hidden = true;
+					 }else{
+						 enemyBar.hidden = false;
+						 enemyBar.x = myPlayer.barsPos[id][0];
+						 enemyBar.y = myPlayer.barsPos[id][1];
+					 }
 				 }
 			 }
 		 }
