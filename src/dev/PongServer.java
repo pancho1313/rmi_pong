@@ -63,8 +63,6 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 			if(newPlayer != null){//el player fue correctamente inicializado
 				
 				int id = addToPlayers(newPlayer);
-				//newPlayer.preNewGame();
-				U.localMessage("reinit player" + id);
 				
 				if(serverState == WAITING_FOR_PLAYERS){
 					if(activePlayers == nPlayers){
@@ -74,7 +72,6 @@ public class PongServer extends UnicastRemoteObject implements IPongServer{
 						U.localMessage("Waiting " + numPlayers + ((numPlayers > 1)?" players.":" player."));
 					}
 				}else if(serverState == PLAYING_MATCH){
-					//newPlayer.preNewGame();
 					
 					for(IPlayer p : players){
 						if(p != null){

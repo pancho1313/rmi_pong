@@ -29,7 +29,7 @@ public class Server {
 		
 		try {
 			System.setProperty("java.rmi.server.hostname", ipHost);
-			IPongServer pongServer = new PongServer(numPlayers, 1, ipHost);
+			IPongServer pongServer = new PongServer(numPlayers, 10, ipHost);
 			Naming.rebind("rmi://localhost:1099/PongServer", pongServer);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block

@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 public class Pong implements KeyListener {
 
 	public final static String TITLE = "Pong - CC5303";
-	public final static int WIDTH = 640, HEIGHT = 480;
+	public final static int WIDTH = 480, HEIGHT = 480;
 	public final static int UPDATE_RATE = 60;
 	public final static int DX = 5;
 	public final static double DV = 0.1;
@@ -64,7 +64,7 @@ public class Pong implements KeyListener {
 
 		frame = new JFrame(TITLE);
 		frame.setSize(WIDTH, HEIGHT);
-		frame.setResizable(false);
+		//frame.setResizable(false);//TODO:...
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -76,6 +76,7 @@ public class Pong implements KeyListener {
 		
 
 		frame.pack();
+		
 		frame.addKeyListener(this);
 		frame.addWindowListener(
 			new java.awt.event.WindowAdapter() {
@@ -245,8 +246,13 @@ public class Pong implements KeyListener {
             		if(nextBallX < myBar.right()){
             			if(nextBallY <= myBar.bottom() && nextBallY >= myBar.top()){//myBar pong
 	            			missedBall = false;
-	            			ball.vx = -ball.vx;//TODO: recalcular...
-	            			ball.y += ball.vy;//TODO: recalcular...
+	            			
+	            			double pong = myBar.y - myBar.top();
+	            			double ping = myBar.y - ball.y;
+	            			ball.vx = -ball.vx;
+	            			ball.y += ball.vy;
+	            			ball.vy = (ping/pong);//TODO: recalcular...
+	            			
 	            			mustSendBallPos = true;
 	            			break;
             			}else if(nextBallX < 0){//wall pong
@@ -277,8 +283,13 @@ public class Pong implements KeyListener {
             		if(nextBallX > myBar.left()){
             			if(nextBallY <= myBar.bottom() && nextBallY >= myBar.top()){//myBar pong
 	            			missedBall = false;
-	            			ball.vx = -ball.vx;//TODO: recalcular...
-	            			ball.y += ball.vy;//TODO: recalcular...
+	            			
+	            			double pong = myBar.y - myBar.top();
+	            			double ping = myBar.y - ball.y;
+	            			ball.vx = -ball.vx;
+	            			ball.y += ball.vy;
+	            			ball.vy = (ping/pong);//TODO: recalcular...
+	            			
 	            			mustSendBallPos = true;
 	            			break;
             			}else if(nextBallX >= WIDTH){//wall pong
@@ -308,8 +319,15 @@ public class Pong implements KeyListener {
             		if(nextBallY < myBar.bottom()){
             			if(nextBallX <= myBar.right() && nextBallX >= myBar.left()){//myBar pong
 	            			missedBall = false;
-	            			ball.vy = -ball.vy;//TODO: recalcular...
-	            			ball.x += ball.vx;//TODO: recalcular...
+	            			
+	            			double pong = myBar.x - myBar.left();
+	            			double ping = myBar.x - ball.x;
+	            			ball.vy = -ball.vy;
+	            			ball.x += ball.vx;
+	            			
+	            			ball.vx = (ping/pong);//TODO: recalcular...
+	            			
+	            			
 	            			mustSendBallPos = true;
 	            			break;
             			}else if(nextBallY < 0){//wall pong
@@ -339,8 +357,14 @@ public class Pong implements KeyListener {
             		if(nextBallY > myBar.top()){
             			if(nextBallX <= myBar.right() && nextBallX >= myBar.left()){//myBar pong
 	            			missedBall = false;
-	            			ball.vy = -ball.vy;//TODO: recalcular...
-	            			ball.x += ball.vx;//TODO: recalcular...
+	            			
+	            			double pong = myBar.x - myBar.left();
+	            			double ping = myBar.x - ball.x;
+	            			ball.vy = -ball.vy;
+	            			ball.x += ball.vx;
+	            			
+	            			ball.vx = (ping/pong);//TODO: recalcular...
+	            			
 	            			mustSendBallPos = true;
 	            			break;
             			}else if(nextBallY >= HEIGHT){//wall pong
@@ -449,7 +473,7 @@ public class Pong implements KeyListener {
          case Player.SHOW_MATCH_RESULTS:
         	 if(keysPressed[KeyEvent.VK_Q] || keysPressed[KeyEvent.VK_N]){
         		
- 				suicide = true;
+        		 myPlayer.setGameState(Player.GAME_OVER);
         	 }
         	 if(keysPressed[KeyEvent.VK_Y]){
         		 //reset();
