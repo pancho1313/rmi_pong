@@ -3,6 +3,7 @@ package dev;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -63,19 +64,25 @@ public class Pong implements KeyListener {
 	public void init() {
 
 		frame = new JFrame(TITLE);
-		frame.setSize(WIDTH, HEIGHT);
+		frame.setLayout(new BorderLayout());
+		//frame.setSize(WIDTH, HEIGHT+100);
 		//frame.setResizable(false);//TODO:...
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
+		
 		canvas = new MyCanvas(WIDTH, HEIGHT);
 		frame.add(canvas);
+		frame.pack();
+		
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		
 		
 		reset();//no mover de aqui!
 
 		
 
-		frame.pack();
+		
 		
 		frame.addKeyListener(this);
 		frame.addWindowListener(
