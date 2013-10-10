@@ -65,13 +65,12 @@ public class Pong implements KeyListener {
 
 		frame = new JFrame(TITLE);
 		frame.setLayout(new BorderLayout());
-		//frame.setSize(WIDTH, HEIGHT+100);
-		//frame.setResizable(false);//TODO:...
 		
 		canvas = new MyCanvas(WIDTH, HEIGHT);
 		frame.add(canvas);
 		frame.pack();
 		
+		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
